@@ -22,8 +22,8 @@ function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
 
 // 1. Buat "Buku Telepon" yang berisi daftar sekolah dan link Backend-nya masing-masing
 const daftarSekolah = {
-    "sman15tebo": "https://script.google.com/macros/s/AKfycbyBF1zoZJS63NHpEjdS_ABLl0ZBi4yGpFMeHPo8wiQZiaTSfFt8P11X7H8UsTCH7M9r/exec",
-    "demo": "https://script.google.com/a/macros/admin.sma.belajar.id/s/...../exec"
+    "sman15tebo": "https://script.google.com/macros/s/AKfycbwFivYc-q2ZrU2NO91OXMkmVM7lLy5-rMUu4HxuoDuFtJFvVQQdw_VTOqxCIMDwm_Rm/exec",
+    "demo": "https://script.google.com/macros/s/AKfycbwFivYc-q2ZrU2NO91OXMkmVM7lLy5-rMUu4HxuoDuFtJFvVQQdw_VTOqxCIMDwm_Rm/exec"
 };
 
 // 2. Baca parameter ?id= dari URL browser (untuk mode Web)
