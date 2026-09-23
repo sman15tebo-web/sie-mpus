@@ -655,6 +655,32 @@ function apiHelper() {
                         }
                         return;
                     }
+                    // Mode Online: Kirim langsung ke GAS
+                    if (!window.isElectron) {
+                        let target = (typeof API_URL !== 'undefined') ? API_URL : '';
+                        if (!target || target.includes('.....')) {
+                            if (typeof swalCountdownInterval !== 'undefined') clearInterval(swalCountdownInterval);
+                            if (failCb) failCb('URL server belum dikonfigurasi.');
+                            return;
+                        }
+                        const payloadOnline = { action: action, type: type, rows: cleanedRows };
+                        fetch(target, {
+                            redirect: 'follow', method: 'POST',
+                            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                            body: JSON.stringify(payloadOnline)
+                        })
+                        .then(r => r.json())
+                        .then(resData => {
+                            if (typeof swalCountdownInterval !== 'undefined') clearInterval(swalCountdownInterval);
+                            if (successCb) successCb(resData);
+                        })
+                        .catch(err => {
+                            if (typeof swalCountdownInterval !== 'undefined') clearInterval(swalCountdownInterval);
+                            if (failCb) failCb(err);
+                        });
+                        return;
+                    }
+                    // Mode Offline: masuk queue
                     await addToQueue(action, { type: type, rows: cleanedRows });
                     await new Promise(r => setTimeout(r, 600));
                     if (typeof swalCountdownInterval !== 'undefined') clearInterval(swalCountdownInterval);
@@ -668,12 +694,38 @@ function apiHelper() {
                     return;
                 }
 
+
+                // MODE ONLINE (Web): Kirim langsung ke GAS via fetch, jangan masuk queue
+                if (!window.isElectron) {
+                    let target = (typeof API_URL !== 'undefined') ? API_URL : '';
+                    if (!target || target.includes('.....')) {
+                        if (typeof swalCountdownInterval !== 'undefined') clearInterval(swalCountdownInterval);
+                        if (failCb) failCb('URL server sekolah belum dikonfigurasi. Pastikan parameter ?id= pada URL sudah benar.');
+                        return;
+                    }
+                    let payloadWithAction = { action: action, ...payload };
+                    fetch(target, {
+                        redirect: 'follow', method: 'POST',
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                        body: JSON.stringify(payloadWithAction)
+                    })
+                    .then(r => r.json())
+                    .then(resData => {
+                        if (typeof swalCountdownInterval !== 'undefined') clearInterval(swalCountdownInterval);
+                        if (successCb) successCb(resData);
+                    })
+                    .catch(err => {
+                        if (typeof swalCountdownInterval !== 'undefined') clearInterval(swalCountdownInterval);
+                        if (failCb) failCb(err);
+                    });
+                    return; // Selesai mode online
+                }
+
+                // MODE OFFLINE (Desktop/Electron): Masukkan ke antrean lokal
                 await addToQueue(action, payload);
-                // Jeda 600ms agar animasi popup SweetAlert (showSmartLoading) 
-                // punya waktu untuk tampil sempurna sebelum diganti popup sukses. 
-                // Ini mencegah bug "loading terus-menerus" (race condition).
-                await new Promise(r => setTimeout(r, 600)); 
-                
+                // Jeda 600ms agar animasi popup SweetAlert tidak race condition
+                await new Promise(r => setTimeout(r, 600));
+
                 if (typeof swalCountdownInterval !== 'undefined') clearInterval(swalCountdownInterval);
                 let dummyPeminjam = 'Offline User';
                 let dummyJudul = 'Offline Book';
