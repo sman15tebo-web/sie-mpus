@@ -1,0 +1,1516 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <base target="_top">
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+    <title>SiE-MPuS</title>
+    <link rel="icon" type="image/png" href="./imgsiempus.png">
+
+
+    <meta name="theme-color" content="#4361ee">
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="SiE-MPuS">
+    <link rel="apple-touch-icon" href="./imgsiempus.png">
+
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link href="./vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="./vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="./vendor/sweetalert2/sweetalert2.min.css" rel="stylesheet">
+    <link href="./vendor/cropperjs/cropper.min.css" rel="stylesheet">
+
+    <script src="./vendor/xlsx/xlsx.full.min.js"></script>
+    <script src="./vendor/html2canvas/html2canvas.min.js"></script>
+    <script src="./vendor/cropperjs/cropper.min.js"></script>
+
+    <link rel="stylesheet" href="./css/style.css">
+
+</head>
+
+<body>
+
+    <div id="overlay" class="overlay"></div>
+
+
+
+    <!-- ================= LANDING PAGE ================= -->
+    <div id="landing-app" class="position-relative"
+        style="background: radial-gradient(circle at top right, rgba(255,255,255,0.9), rgba(240,249,255,0.7)), linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%); min-height: 100vh; overflow-x: hidden; z-index: 1;">
+
+        <!-- Ambient Glowing Blobs with dynamic gradient colors -->
+        <div class="blob-dyn-1"></div>
+        <div class="blob-dyn-2"></div>
+        <div class="blob-dyn-3"></div>
+
+        <!-- 1. Top Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-light sticky-top shadow-xs"
+            style="background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-bottom: 1px solid rgba(255, 255, 255, 0.6); z-index: 100;">
+            <div class="container">
+                <a class="navbar-brand fw-bold text-dark d-flex align-items-center gap-2" href="#"
+                    onclick="showLandingPage(); return false;">
+                    <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgKQaKy8lB3IXcmsdcPpZUorKzNCnUUlT8mEBvkDgnozpJRpbHdld-uSH0fWWOActJnaHg078VQ3GG5vwtr2ydeDh_3O_r5gnEOpcKmVE4-tiz9Blkb4mjVcToRFGJaODrYq_t4V0-8xB_lppMvuIko0OY0bXPrSK7fbMI_vLVGyBbvgUIRD4lI5P4ucoWw/s80/Logo%20SiE-MPus%20baru%20ok.png"
+                        alt="Logo" width="34">
+                    <span class="gradient-text fw-extrabold"
+                        style="font-size: 1.25rem; letter-spacing: -0.5px;">SiE-MPuS</span>
+                    <span class="badge rounded-pill text-white shadow-xs"
+                        style="background: var(--custom-gradient); font-size: 0.65rem; padding: 4px 8px;">Hybrid</span>
+                </a>
+                <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#landingNavbar">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="landingNavbar">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center gap-2">
+                        <li class="nav-item">
+                            <a class="nav-link fw-bold text-secondary px-3" href="#"
+                                onclick="showLandingPage(); return false;"><i class="fas fa-home me-1"></i> Beranda</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link fw-bold text-secondary px-3" href="#katalog-section"
+                                onclick="scrollToKatalog(); return false;"><i class="fas fa-book me-1"></i> Katalog</a>
+                        </li>
+                        <li class="nav-item ms-lg-2">
+                            <button class="btn btn-custom-gradient fw-bold rounded-pill px-4 shadow-sm"
+                                onclick="showLoginPage()"><i class="fas fa-sign-in-alt me-1"></i> Login</button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!-- 2. Hero Section (Halaman Depan Utama) -->
+        <div id="landing-hero-section"
+            class="container-fluid d-flex flex-column justify-content-center align-items-center text-center position-relative"
+            style="min-height: calc(100vh - 80px); padding-top: 35px; padding-bottom: 50px; z-index: 5; position: relative;">
+
+            <!-- Announcement Pill Tag -->
+            <div
+                class="d-inline-flex align-items-center gap-2 px-3 py-1 mb-3 rounded-pill shadow-xs border bg-white bg-opacity-90">
+                <span class="badge rounded-pill px-2 py-1 text-white"
+                    style="background: var(--custom-gradient); font-size: 0.7rem;"><i class="fas fa-sparkles me-1"></i>
+                    RESMI</span>
+                <span class="small fw-semibold text-secondary">Portal Sistem E-Manajemen Perpustakaan Sekolah</span>
+            </div>
+
+            <!-- Main Showcase Hero Card -->
+            <div class="glass-morphism-card p-4 p-md-5 shadow-lg position-relative"
+                style="border-radius: 28px; max-width: 860px; width: 100%; background: rgba(255, 255, 255, 0.75) !important; backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.9);">
+
+                <!-- Header Identitas & Logo Responsive: Di Laptop: Kiri (Logo Instansi) - Tengah (Teks) - Kanan (Logo Sekolah) | Di HP: Kedua Logo di Atas, Teks di Bawah -->
+                <div class="row align-items-center justify-content-between mb-4 w-100 g-3">
+                    <!-- Logo Instansi: Di HP (col-6 kiri-atas), di Laptop (col-md-2 ujung kiri) -->
+                    <div class="col-6 col-md-2 order-1 order-md-1 text-center text-md-start">
+                        <div class="d-inline-flex p-2 p-md-3 rounded-4 bg-white bg-opacity-80 shadow-sm border"
+                            style="backdrop-filter: blur(10px);">
+                            <img id="landing-logo-instansi" class="anim-float-1"
+                                src="https://cdn-icons-png.flaticon.com/512/2232/2232688.png"
+                                style="width: 80px; height: 80px; object-fit: contain;" crossorigin="anonymous">
+                        </div>
+                    </div>
+
+                    <!-- Logo Sekolah: Di HP (col-6 kanan-atas sebelah logo instansi), di Laptop (col-md-2 ujung kanan) -->
+                    <div class="col-6 col-md-2 order-2 order-md-3 text-center text-md-end">
+                        <div class="d-inline-flex p-2 p-md-3 rounded-4 bg-white bg-opacity-80 shadow-sm border"
+                            style="backdrop-filter: blur(10px);">
+                            <img id="landing-logo-sekolah" class="anim-float-2"
+                                src="https://cdn-icons-png.flaticon.com/512/2232/2232688.png"
+                                style="width: 80px; height: 80px; object-fit: contain;" crossorigin="anonymous">
+                        </div>
+                    </div>
+
+                    <!-- Kolom Tengah: Teks Identitas Sekolah (Di HP di bawah kedua logo, di Laptop persis di tengah diapit 2 logo) -->
+                    <div class="col-12 col-md-8 order-3 order-md-2 text-center px-lg-3">
+                        <div class="fw-bold text-uppercase text-muted mb-1" id="landing-instansi-name"
+                            style="letter-spacing: 2px; font-size: 0.85rem;">PEMERINTAH DAERAH ....</div>
+                        <h1 class="fw-bolder text-uppercase mb-2 gradient-text" id="landing-school-name"
+                            style="font-size: clamp(1.5rem, 3.5vw, 2.4rem); letter-spacing: 0.5px; line-height: 1.2;">
+                            NAMA SEKOLAH</h1>
+                        <div class="d-flex align-items-center justify-content-center gap-2 text-muted small mb-0 px-2">
+                            <i class="fas fa-map-marker-alt text-danger"></i>
+                            <span id="landing-alamat-text" style="max-width: 600px;">Alamat sekolah akan tampil di
+                                sini...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feature Badges Grid: Selalu 3 sebaris di HP & Laptop -->
+                <div class="row g-2 g-md-3 justify-content-center my-2 text-start w-100">
+                    <div class="col-4">
+                        <div
+                            class="p-2 p-md-3 rounded-4 bg-white bg-opacity-85 border shadow-sm h-100 d-flex flex-column flex-sm-row align-items-center gap-1 gap-md-3 hover-translate text-center text-sm-start">
+                            <div class="feature-icon-box rounded-3 text-white d-flex align-items-center justify-content-center"
+                                style="width: 36px; height: 36px; background: var(--custom-gradient); flex-shrink: 0;">
+                                <i class="fas fa-book-open"></i>
+                            </div>
+                            <div class="overflow-hidden w-100">
+                                <div class="fw-bold text-dark text-truncate"
+                                    style="font-size: clamp(0.68rem, 2vw, 0.85rem);">Koleksi Buku</div>
+                                <div class="text-muted text-truncate d-none d-sm-block" style="font-size: 0.72rem;">
+                                    Pelajaran & Umum</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div
+                            class="p-2 p-md-3 rounded-4 bg-white bg-opacity-85 border shadow-sm h-100 d-flex flex-column flex-sm-row align-items-center gap-1 gap-md-3 hover-translate text-center text-sm-start">
+                            <div class="feature-icon-box rounded-3 text-white d-flex align-items-center justify-content-center"
+                                style="width: 36px; height: 36px; background: var(--custom-gradient); flex-shrink: 0;">
+                                <i class="fas fa-search"></i>
+                            </div>
+                            <div class="overflow-hidden w-100">
+                                <div class="fw-bold text-dark text-truncate"
+                                    style="font-size: clamp(0.68rem, 2vw, 0.85rem);">Cari Cepat</div>
+                                <div class="text-muted text-truncate d-none d-sm-block" style="font-size: 0.72rem;">
+                                    Filter A-Z & Judul</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div
+                            class="p-2 p-md-3 rounded-4 bg-white bg-opacity-85 border shadow-sm h-100 d-flex flex-column flex-sm-row align-items-center gap-1 gap-md-3 hover-translate text-center text-sm-start">
+                            <div class="feature-icon-box rounded-3 text-white d-flex align-items-center justify-content-center"
+                                style="width: 36px; height: 36px; background: var(--custom-gradient); flex-shrink: 0;">
+                                <i class="fas fa-qrcode"></i>
+                            </div>
+                            <div class="overflow-hidden w-100">
+                                <div class="fw-bold text-dark text-truncate"
+                                    style="font-size: clamp(0.68rem, 2vw, 0.85rem);">Layanan Digital</div>
+                                <div class="text-muted text-truncate d-none d-sm-block" style="font-size: 0.72rem;">
+                                    Barcode & Kartu</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Mini Stats Badges: Selalu 3 sebaris di HP & Laptop -->
+                <div class="row g-2 g-md-3 justify-content-center mt-1 mb-2 text-start w-100">
+                    <div class="col-4">
+                        <div class="p-2 p-md-3 rounded-4 bg-white bg-opacity-90 border shadow-sm h-100 d-flex flex-column flex-sm-row align-items-center gap-1 gap-md-3 hover-translate text-center text-sm-start"
+                            style="border-left: 4px solid var(--grad-c1, #4361ee) !important;">
+                            <div class="rounded-circle d-flex align-items-center justify-content-center text-primary shadow-xs"
+                                style="width: 34px; height: 34px; background: rgba(67, 97, 238, 0.12); flex-shrink: 0;">
+                                <i class="fas fa-users-cog"></i>
+                            </div>
+                            <div class="overflow-hidden w-100">
+                                <div class="text-muted small fw-semibold text-truncate"
+                                    style="font-size: clamp(0.6rem, 1.8vw, 0.72rem);">Anggota</div>
+                                <div class="fw-bolder text-dark" id="landing-stat-anggota"
+                                    style="font-size: clamp(0.9rem, 2.8vw, 1.25rem);">0</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="p-2 p-md-3 rounded-4 bg-white bg-opacity-90 border shadow-sm h-100 d-flex flex-column flex-sm-row align-items-center gap-1 gap-md-3 hover-translate text-center text-sm-start"
+                            style="border-left: 4px solid var(--grad-c2, #3a0ca3) !important;">
+                            <div class="rounded-circle d-flex align-items-center justify-content-center text-info shadow-xs"
+                                style="width: 34px; height: 34px; background: rgba(58, 12, 163, 0.12); flex-shrink: 0;">
+                                <i class="fas fa-book"></i>
+                            </div>
+                            <div class="overflow-hidden w-100">
+                                <div class="text-muted small fw-semibold text-truncate"
+                                    style="font-size: clamp(0.6rem, 1.8vw, 0.72rem);">Judul Buku</div>
+                                <div class="fw-bolder text-dark" id="landing-stat-judul"
+                                    style="font-size: clamp(0.9rem, 2.8vw, 1.25rem);">0</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="p-2 p-md-3 rounded-4 bg-white bg-opacity-90 border shadow-sm h-100 d-flex flex-column flex-sm-row align-items-center gap-1 gap-md-3 hover-translate text-center text-sm-start"
+                            style="border-left: 4px solid var(--grad-c3, #4cc9f0) !important;">
+                            <div class="rounded-circle d-flex align-items-center justify-content-center text-success shadow-xs"
+                                style="width: 34px; height: 34px; background: rgba(76, 201, 240, 0.15); flex-shrink: 0;">
+                                <i class="fas fa-layer-group"></i>
+                            </div>
+                            <div class="overflow-hidden w-100">
+                                <div class="text-muted small fw-semibold text-truncate"
+                                    style="font-size: clamp(0.6rem, 1.8vw, 0.72rem);">Eksemplar</div>
+                                <div class="fw-bolder text-dark" id="landing-stat-eksemplar"
+                                    style="font-size: clamp(0.9rem, 2.8vw, 1.25rem);">0</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Action Button ke Katalog -->
+                <div class="mt-4 pt-2 d-flex justify-content-center gap-3 flex-wrap">
+                    <a href="#katalog-section" onclick="scrollToKatalog(); return false;"
+                        class="btn btn-custom-gradient rounded-pill px-5 py-3 fw-bold shadow-lg d-inline-flex align-items-center gap-2"
+                        style="font-size: 1rem;">
+                        <i class="fas fa-book-reader"></i> Jelajahi Katalog Buku
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Katalog Section (Di dalam landing-app) -->
+        <section id="katalog-section" class="py-5"
+            style="background: rgba(255,255,255,0.85); min-height: 600px; border-top: 1px solid rgba(0,0,0,0.06);">
+            <div class="container">
+                <div class="text-center mb-4">
+                    <span class="badge rounded-pill px-3 py-2 text-white mb-2 shadow-xs"
+                        style="background: var(--custom-gradient); font-size: 0.75rem;">KATALOG DIGITAL</span>
+                    <h2 class="fw-bold text-dark"><i class="fas fa-book-reader me-2"
+                            style="color: var(--grad-c1, #4361ee);"></i>Katalog Buku <span id="publicCatalogTitle"
+                            class="gradient-text"></span></h2>
+                    <p class="text-muted small">Cari dan temukan ketersediaan buku perpustakaan secara mudah dan cepat
+                    </p>
+                </div>
+
+                <!-- Filter A-Z -->
+                <div class="card glass-morphism-card shadow-sm border-0 mb-4"
+                    style="border-radius: 20px; background: rgba(255,255,255,0.8) !important;">
+                    <div class="card-body p-3">
+                        <h6 class="fw-bold mb-2 text-muted small"><i class="fas fa-filter me-1"></i> Filter Huruf Awal:
+                        </h6>
+                        <div class="d-flex flex-wrap gap-2 justify-content-center" id="publicCatalogAlphabetFilter">
+                            <!-- Generated by JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Search Input -->
+                <div class="card glass-morphism-card shadow-sm border-0 mb-4"
+                    style="border-radius: 20px; background: rgba(255,255,255,0.8) !important;">
+                    <div class="card-body p-4">
+                        <div class="row g-3 align-items-center">
+                            <div class="col-md-3">
+                                <select class="form-select form-select-lg border-primary shadow-sm"
+                                    id="publicCatalogSearchBy">
+                                    <option value="judul">Judul Buku</option>
+                                    <option value="pengarang">Pengarang</option>
+                                    <option value="penerbit">Penerbit</option>
+                                </select>
+                            </div>
+                            <div class="col-md-9">
+                                <div class="input-group input-group-lg shadow-sm">
+                                    <input type="text" class="form-control border-primary" id="publicCatalogSearchInput"
+                                        placeholder="Ketik judul buku, nama pengarang, atau penerbit...">
+                                    <button class="btn btn-custom-gradient px-4 fw-bold" type="button"
+                                        onclick="loadPublicCatalog(1)"><i class="fas fa-search me-2"></i> Cari</button>
+                                    <button class="btn btn-outline-secondary px-4 fw-bold" type="button"
+                                        onclick="resetPublicCatalog()"><i class="fas fa-sync-alt me-2"></i>
+                                        Reset</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Table -->
+                <div class="card glass-morphism-card shadow-sm border-0 overflow-hidden" style="border-radius: 20px;">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0" id="publicCatalogTable">
+                                <thead class="text-white" style="background: var(--custom-gradient);">
+                                    <tr>
+                                        <th class="py-3 px-4">Judul Buku</th>
+                                        <th class="py-3 px-4">Pengarang</th>
+                                        <th class="py-3 px-4">Penerbit</th>
+                                        <th class="py-3 px-4">Kategori</th>
+                                        <th class="py-3 px-4 text-center">Status Koleksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="publicCatalogTbody" class="bg-white">
+                                    <tr>
+                                        <td colspan="5" class="text-center py-5 text-muted"><i
+                                                class="fas fa-spinner fa-spin me-2"></i>Memuat data katalog...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="p-3 bg-light d-flex justify-content-between align-items-center"
+                            id="publicCatalogPagination">
+                            <!-- Pagination -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section Apresiasi Literasi (Siswa Terajin & Buku Terfavorit) -->
+        <section id="literasi-highlight-section" class="py-5 position-relative"
+            style="background: linear-gradient(180deg, rgba(255,255,255,0.92) 0%, #f8fafc 100%); border-top: 1px solid rgba(0,0,0,0.06);">
+            <div class="container">
+                <div class="text-center mb-4">
+                    <span class="badge rounded-pill px-3 py-2 text-white mb-2 shadow-xs"
+                        style="background: var(--custom-gradient); font-size: 0.75rem;"><i
+                            class="fas fa-award me-1"></i> HALL OF FAME LITERASI</span>
+                    <h3 class="fw-bold text-dark">Apresiasi Literasi & Koleksi Populer</h3>
+                    <p class="text-muted small mb-0">Penghargaan pembaca paling aktif dan buku yang paling diminati
+                        pembaca</p>
+                </div>
+
+                <div class="row g-4 justify-content-center">
+                    <!-- Kartu Siswa Terajin -->
+                    <div class="col-md-6 col-lg-5">
+                        <div class="card glass-morphism-card shadow-sm border-0 h-100 p-4 hover-translate"
+                            style="border-radius: 24px; background: rgba(255, 255, 255, 0.85) !important; border-top: 4px solid #f59e0b !important;">
+                            <div class="d-flex align-items-center gap-3 mb-3">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center text-warning shadow-sm"
+                                    style="width: 56px; height: 56px; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); flex-shrink: 0;">
+                                    <i class="fas fa-trophy fa-2x"></i>
+                                </div>
+                                <div>
+                                    <span
+                                        class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle px-2 py-1 rounded-pill small fw-bold"><i
+                                            class="fas fa-star me-1"></i> SISWA TERAJIN</span>
+                                    <h5 class="fw-bold text-dark mb-0 mt-1" id="landing-siswa-terajin">-</h5>
+                                </div>
+                            </div>
+                            <p class="text-muted small mb-0">Anggota perpustakaan dengan frekuensi peminjaman dan
+                                kunjungan aktif tertinggi di sistem perpustakaan.</p>
+                        </div>
+                    </div>
+
+                    <!-- Kartu Buku Terfavorit -->
+                    <div class="col-md-6 col-lg-5">
+                        <div class="card glass-morphism-card shadow-sm border-0 h-100 p-4 hover-translate"
+                            style="border-radius: 24px; background: rgba(255, 255, 255, 0.85) !important; border-top: 4px solid var(--grad-c1, #4361ee) !important;">
+                            <div class="d-flex align-items-center gap-3 mb-3">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center text-primary shadow-sm"
+                                    style="width: 56px; height: 56px; background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%); flex-shrink: 0;">
+                                    <i class="fas fa-fire fa-2x text-danger"></i>
+                                </div>
+                                <div>
+                                    <span
+                                        class="badge bg-danger-subtle text-danger border border-danger-subtle px-2 py-1 rounded-pill small fw-bold"><i
+                                            class="fas fa-thumbs-up me-1"></i> BUKU TERFAVORIT</span>
+                                    <h5 class="fw-bold text-dark mb-0 mt-1" id="landing-buku-terfavorit">-</h5>
+                                </div>
+                            </div>
+                            <p class="text-muted small mb-0">Koleksi bahan pustaka yang paling banyak dipinjam dan
+                                paling diminati oleh para siswa dan guru.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Modern Official Footer (Persis Sesuai Permintaan) -->
+        <footer class="text-light pt-5 pb-0 mt-auto position-relative"
+            style="background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%); border-top: 4px solid var(--grad-c1, #4361ee);">
+            <div class="container pb-4">
+                <div class="row g-4 justify-content-between align-items-start">
+                    <!-- Kolom Kiri: Logo + Nama Instansi/Sekolah & Kontak -->
+                    <div class="col-lg-7 col-md-8">
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <img id="footer-logo-sekolah" src="https://cdn-icons-png.flaticon.com/512/2232/2232688.png"
+                                style="width: 68px; height: 68px; object-fit: contain; background: white; padding: 6px; border-radius: 16px;"
+                                class="shadow-sm" crossorigin="anonymous">
+                            <div>
+                                <div class="text-uppercase small fw-bold text-light opacity-75" id="footer-instansi">
+                                    PEMERINTAH DAERAH ....</div>
+                                <h4 class="fw-bold text-white mb-1 text-uppercase" id="footer-sekolah">NAMA SEKOLAH</h4>
+                                <span class="badge"
+                                    style="background: var(--custom-gradient, #4361ee); font-size: 0.72rem;">PERPUSTAKAAN
+                                    SEKOLAH</span>
+                            </div>
+                        </div>
+
+                        <!-- Alamat Sekolah -->
+                        <div class="text-light opacity-75 small mb-3">
+                            <p class="mb-2 d-flex align-items-start gap-2">
+                                <i class="fas fa-map-marker-alt text-danger mt-1"></i>
+                                <span id="footer-alamat">Alamat sekolah akan tampil di sini...</span>
+                            </p>
+                        </div>
+
+                        <!-- No HP/WA, Email, Website -->
+                        <div class="d-flex flex-wrap gap-4 text-light opacity-85 small">
+                            <a id="footer-hp-link" href="#" target="_blank"
+                                class="text-light text-decoration-none d-flex align-items-center gap-2">
+                                <i class="fab fa-whatsapp text-success fa-lg"></i>
+                                <span id="footer-hp">-</span>
+                            </a>
+                            <a id="footer-email-link" href="#"
+                                class="text-light text-decoration-none d-flex align-items-center gap-2">
+                                <i class="fas fa-envelope text-warning fa-lg"></i>
+                                <span id="footer-email">-</span>
+                            </a>
+                            <a id="footer-web" href="#" target="_blank"
+                                class="text-light text-decoration-none d-flex align-items-center gap-2">
+                                <i class="fas fa-globe text-info fa-lg"></i>
+                                <span id="footer-web-text">-</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Kolom Kanan: Media Sosial & Informasi -->
+                    <div class="col-lg-4 col-md-4 text-md-end">
+                        <h6 class="fw-bold text-white text-uppercase tracking-wider mb-2">Media Sosial & Informasi</h6>
+                        <p class="text-light opacity-75 small mb-3">Ikuti media sosial resmi sekolah kami untuk
+                            informasi kegiatan literasi dan koleksi terbaru:</p>
+
+                        <div class="d-flex gap-2 justify-content-md-end mb-4">
+                            <a id="footer-link-fb" href="https://facebook.com" target="_blank"
+                                class="btn btn-outline-light btn-sm rounded-circle d-flex align-items-center justify-content-center footer-social-btn"
+                                style="width: 40px; height: 40px;" title="Facebook">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a id="footer-link-ig" href="https://instagram.com" target="_blank"
+                                class="btn btn-outline-light btn-sm rounded-circle d-flex align-items-center justify-content-center footer-social-btn"
+                                style="width: 40px; height: 40px;" title="Instagram">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                            <a id="footer-link-yt" href="https://youtube.com" target="_blank"
+                                class="btn btn-outline-light btn-sm rounded-circle d-flex align-items-center justify-content-center footer-social-btn"
+                                style="width: 40px; height: 40px;" title="YouTube">
+                                <i class="fab fa-youtube"></i>
+                            </a>
+                            <a id="footer-link-tiktok" href="https://tiktok.com" target="_blank"
+                                class="btn btn-outline-light btn-sm rounded-circle d-flex align-items-center justify-content-center footer-social-btn"
+                                style="width: 40px; height: 40px;" title="TikTok">
+                                <i class="fab fa-tiktok"></i>
+                            </a>
+                            <a id="footer-link-twitter" href="https://x.com" target="_blank"
+                                class="btn btn-outline-light btn-sm rounded-circle d-flex align-items-center justify-content-center footer-social-btn"
+                                style="width: 40px; height: 40px;" title="Twitter / X">
+                                <i class="fab fa-x-twitter"></i>
+                            </a>
+                        </div>
+
+                        <div class="p-3 rounded-4 bg-white bg-opacity-10 text-start text-md-end d-inline-block w-100"
+                            style="backdrop-filter: blur(5px);">
+                            <small class="text-light opacity-75 d-block"><i class="fas fa-clock text-warning me-1"></i>
+                                Jam Layanan Perpustakaan:</small>
+                            <small class="fw-semibold text-white">Senin - Kamis | 07.30 - 15.00 WIB</small><br>
+                            <small class="fw-semibold text-white">Jumat - Sabtu | 07.30 - 11.00 WIB</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Copyright Bar (Persis sesuai permintaan) -->
+            <div class="border-top border-secondary border-opacity-25 py-3" style="background: rgba(0,0,0,0.35);">
+                <div
+                    class="container d-flex flex-column flex-md-row justify-content-between align-items-center gap-2 small text-light opacity-75">
+                    <div>
+                        <span id="footer-copyright">© 2026 SiE-MPuS NAMA SEKOLAH. Hak Cipta Dilindungi.</span>
+                    </div>
+                    <div class="text-center">
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#modalPrivasi"
+                            class="text-decoration-none fw-semibold"
+                            style="color: var(--grad-c3, #4cc9f0); font-size: 12px;">
+                            <i class="fas fa-shield-alt me-1"></i> Kebijakan Privasi
+                        </a>
+                    </div>
+                    <div>
+                        Powered by <a href="https://www.farypin-inovasiteknologi.com" target="_blank"
+                            class="fw-bold text-decoration-none" style="color: var(--grad-c3, #4cc9f0);">PT Farypin
+                            Inovasi Teknologi</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+    <!-- ================= END LANDING PAGE ================= -->
+
+    <!-- ================= LOGIN PAGE ================= -->
+    <div id="login-app"
+        class="d-none align-items-center justify-content-center vh-100 position-relative overflow-hidden"
+        style="background: linear-gradient(135deg, #e0f2fe 0%, #f0fdf4 100%); z-index: 1;">
+
+        <div class="color-blob blob-biru"></div>
+        <div class="color-blob blob-pink"></div>
+
+        <div class="card login-card glass-morphism-card shadow-lg p-4 p-md-5"
+            style="max-width: 450px; width: 92%; border-radius: 24px; background: rgba(255, 255, 255, 0.75) !important; backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.85); z-index: 2;">
+
+            <div class="text-center mb-4">
+                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgKQaKy8lB3IXcmsdcPpZUorKzNCnUUlT8mEBvkDgnozpJRpbHdld-uSH0fWWOActJnaHg078VQ3GG5vwtr2ydeDh_3O_r5gnEOpcKmVE4-tiz9Blkb4mjVcToRFGJaODrYq_t4V0-8xB_lppMvuIko0OY0bXPrSK7fbMI_vLVGyBbvgUIRD4lI5P4ucoWw/s80/Logo%20SiE-MPus%20baru%20ok.png"
+                    style="width:55px; margin-bottom:12px;">
+                <h4 class="fw-bold text-dark mb-1">Silakan Login</h4>
+                <p class="text-muted small mb-0">Akses Masuk Administrator Sistem</p>
+                <div id="loginModeIndicator" class="mt-2"></div>
+            </div>
+
+            <form id="loginForm" onsubmit="event.preventDefault(); attemptLogin();">
+                <div class="mb-3">
+                    <label class="form-label small fw-bold text-muted">Username</label>
+                    <div class="input-group shadow-sm rounded">
+                        <span class="input-group-text bg-white border-end-0"><i
+                                class="fas fa-user text-primary"></i></span>
+                        <input type="text" class="form-control border-start-0 bg-white" id="uName"
+                            placeholder="Ketik username..." required>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label class="form-label small fw-bold text-muted">Password</label>
+                    <div class="input-group shadow-sm rounded">
+                        <span class="input-group-text bg-white border-end-0"><i
+                                class="fas fa-lock text-primary"></i></span>
+                        <input type="password" class="form-control border-start-0 border-end-0 bg-white" id="uPass"
+                            placeholder="Ketik password..." required>
+                        <button class="btn btn-white border border-start-0 text-muted bg-white" type="button"
+                            onclick="togglePassword()">
+                            <i class="fas fa-eye" id="eyeIcon"></i>
+                        </button>
+                    </div>
+                </div>
+                <button type="submit" id="btnLogin"
+                    class="btn btn-primary w-100 py-3 fw-bold rounded-pill shadow-lg hover-scale text-uppercase"
+                    style="background: linear-gradient(135deg, var(--primary-color, #4361ee), var(--accent-color, #3a0ca3)); border: none;">Login
+                    Sistem</button>
+            </form>
+
+            <div class="mt-3 text-center">
+                <button type="button" class="btn btn-outline-secondary w-100 py-2 fw-bold rounded-pill shadow-sm small"
+                    onclick="showLandingPage()">
+                    <i class="fas fa-arrow-left me-2"></i> Kembali ke Beranda
+                </button>
+            </div>
+
+            <div class="row g-2 mt-4 pt-3 border-top border-secondary border-opacity-25">
+                <div class="col-6">
+                    <a id="btn-dl-win" href="#" target="_blank"
+                        class="btn btn-outline-secondary w-100 py-2 small fw-bold d-none rounded-pill bg-white shadow-sm"
+                        style="font-size: 11px;">
+                        <i class="fab fa-windows text-info fa-lg"></i> App Windows
+                    </a>
+                </div>
+                <div class="col-6">
+                    <a id="btn-dl-and" href="#" target="_blank"
+                        class="btn btn-outline-success w-100 py-2 small fw-bold d-none rounded-pill bg-white shadow-sm"
+                        style="font-size: 11px;">
+                        <i class="fab fa-android text-success fa-lg"></i> App Android
+                    </a>
+                </div>
+            </div>
+
+            <!-- App Version -->
+            <div class="mt-3 text-center">
+                <span class="badge bg-white bg-opacity-80 text-secondary border px-3 py-1 rounded-pill shadow-xs" style="font-size: 11px; letter-spacing: 0.5px;">
+                    <i class="fas fa-code-branch me-1 text-primary"></i> App Version : 2.2026.09
+                </span>
+            </div>
+        </div>
+    </div>
+    <!-- ================= END LOGIN PAGE ================= -->
+
+
+    <div id="main-app" class="d-none">
+
+        <div class="mobile-header">
+            <div class="mobile-header-left">
+                <img id="mobile-logo-img" src="https://cdn-icons-png.flaticon.com/512/2232/2232688.png"
+                    crossorigin="anonymous">
+                <span id="mobile-school-text">SiE-MPuS</span>
+            </div>
+            <div class="mobile-header-right">
+                <div class="top-icon-btn" onclick="showPage('riwayat'); updateMobileNav('riwayat')">
+                    <i class="fas fa-history"></i><span>Riwayat</span>
+                </div>
+                <div class="top-icon-btn" onclick="showPage('pengaturan'); updateMobileNav('pengaturan')">
+                    <i class="fas fa-cog"></i><span>Pengaturan</span>
+                </div>
+                <div class="top-icon-btn text-danger" id="nav-logout-mobile">
+                    <i class="fas fa-sign-out-alt"></i><span>Keluar</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="mobile-bottom-nav">
+            <div class="bottom-nav-item" id="mob-nav-anggota" onclick="showPage('anggota'); updateMobileNav('anggota')">
+                <i class="fas fa-users"></i><span>Siswa</span>
+            </div>
+            <div class="bottom-nav-item" id="mob-nav-peminjaman"
+                onclick="showPage('peminjaman'); updateMobileNav('peminjaman')">
+                <i class="fas fa-qrcode"></i><span>Pinjam</span>
+            </div>
+
+            <div class="bottom-nav-item home-btn active" id="mob-nav-dashboard"
+                onclick="showPage('dashboard'); updateMobileNav('dashboard')">
+                <div class="fab-inner">
+                    <i class="fas fa-home"></i>
+                </div>
+                <span>Home</span>
+            </div>
+
+            <div class="bottom-nav-item" id="mob-nav-pengembalian"
+                onclick="showPage('pengembalian'); updateMobileNav('pengembalian')">
+                <i class="fas fa-hand-holding-heart"></i><span>Kembali</span>
+            </div>
+            <div class="bottom-nav-item" id="mob-nav-buku" onclick="showPage('buku'); updateMobileNav('buku')">
+                <i class="fas fa-book"></i><span>Buku</span>
+            </div>
+        </div>
+
+        <div class="sidebar shadow-lg" id="sidebar">
+            <div style="padding: 25px; text-align: center; border-bottom: 1px solid #f0f0f0;">
+                <img id="sidebar-logo" src="" height="50" class="mb-2" crossorigin="anonymous">
+                <div id="sidebar-school-name" class="fw-bold text-primary text-uppercase small"></div>
+            </div>
+            <nav class="nav flex-column mt-3">
+                <a href="#" class="nav-link active" id="nav-dashboard"><i class="fas fa-th-large me-2"></i>
+                    Dashboard</a>
+                <a href="#" class="nav-link" id="nav-peminjaman"><i class="fas fa-qrcode me-2"></i> Peminjaman</a>
+                <a href="#" class="nav-link" id="nav-pengembalian"><i class="fas fa-hand-holding-heart me-2"></i>
+                    Pengembalian</a>
+                <a href="#" class="nav-link" id="nav-riwayat"><i class="fas fa-history me-2"></i> Riwayat</a>
+                <a href="#" class="nav-link" id="nav-buku"><i class="fas fa-book me-2"></i> Data Buku</a>
+                <a href="#" class="nav-link" id="nav-anggota"><i class="fas fa-users me-2"></i> Anggota</a>
+                <hr class="text-secondary mx-3 my-2">
+                <a href="#" class="nav-link" id="nav-pengaturan"><i class="fas fa-cog me-2"></i> Pengaturan</a>
+                <div class="mt-auto mb-4 px-3"><button id="nav-logout"
+                        class="btn btn-outline-danger w-100 rounded-pill">Keluar</button></div>
+            </nav>
+        </div>
+
+        <div class="content" id="content">
+            <nav class="navbar navbar-light bg-white shadow-sm mb-4 rounded-3 p-3">
+                <div class="container-fluid p-0 d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center">
+                        <button class="btn btn-light d-md-none me-2" id="btn-toggle-menu">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                        <h5 class="m-0 fw-bold text-secondary text-truncate" style="max-width: 200px;" id="page-title">
+                            Dashboard</h5>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <div id="network-status" class="me-3 px-3 py-1 rounded-pill fw-bold text-white bg-success"
+                            style="font-size: 12px; transition: all 0.3s;">
+                            <i class="fas fa-wifi"></i> Online
+                        </div>
+                        <button class="btn btn-warning text-dark me-3 border shadow-sm rounded-pill"
+                            onclick="manualSync()" id="btn-manual-sync" title="Sinkronisasi Data ke Server">
+                            <i class="fas fa-cloud-upload-alt"></i> <span class="d-none d-md-inline fw-bold">Sync</span>
+                            <span id="sync-badge" class="badge bg-danger rounded-pill">0</span>
+                        </button>
+                        <button class="btn btn-light text-primary me-3 border shadow-sm rounded-pill"
+                            onclick="refreshCurrentPage()" id="btn-global-refresh" title="Refresh Data Saat Ini">
+                            <i class="fas fa-sync-alt"></i> <span class="d-none d-md-inline fw-bold">Refresh</span>
+                        </button>
+                        <span class="d-none d-md-block fw-bold text-dark me-2" id="user-display-name">Admin</span>
+                        <img src="https://ui-avatars.com/api/?name=Admin&background=random"
+                            class="rounded-circle border" width="40" height="40">
+                    </div>
+                </div>
+            </nav>
+
+            <div id="app-pages">
+                <div id="page-dashboard" class="page-section">
+                    <div class="row g-3" id="stats-container"></div>
+                </div>
+
+                <div id="page-peminjaman" class="page-section d-none">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="glass-card p-3 text-center">
+                                <h6 class="fw-bold mb-3">SCANNER</h6>
+                                <div id="reader-loan" class="rounded overflow-hidden border"></div>
+                                <div class="alert alert-info mt-3 py-2 small"><i class="fas fa-info-circle"></i> Scan /
+                                    Ketik ID</div>
+                                <button class="btn btn-light btn-sm w-100" id="btn-reset-loan">Reset</button>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="glass-card p-4 h-100">
+                                <h5 class="fw-bold text-primary mb-3">Peminjaman</h5>
+                                <div class="mb-3 position-relative">
+                                    <label class="small fw-bold" for="loan-member-input">ID/NISN ANGGOTA</label>
+                                    <div class="input-group">
+                                        <input type="text" id="loan-member-input" class="form-control"
+                                            placeholder="Ketik NISN atau Nama Siswa..." autocomplete="off">
+                                        <button class="btn btn-primary" onclick="handleManualMember('loan')"><i
+                                                class="fas fa-search"></i></button>
+                                    </div>
+                                    <div id="loan-member-suggestions" class="dropdown-menu shadow-lg w-100 p-0 mt-1 border-0"
+                                        style="z-index: 1050; display: none; border-radius: 12px; overflow: hidden;"></div>
+                                    <div id="loan-member-name" class="mt-2 text-primary fw-bold"></div>
+                                </div>
+                                <div class="mb-3 opacity-50 position-relative" id="loan-book-group">
+                                    <label class="small fw-bold" for="loan-book-input">KODE BUKU</label>
+                                    <div class="input-group">
+                                        <input type="text" id="loan-book-input" class="form-control"
+                                            placeholder="Ketik Kode atau Judul Buku..." disabled autocomplete="off">
+                                        <button class="btn btn-primary" id="btn-loan-book"
+                                            onclick="handleManualBook('loan')" disabled><i
+                                                class="fas fa-check"></i></button>
+                                    </div>
+                                    <div id="loan-book-suggestions" class="dropdown-menu shadow-lg w-100 p-0 mt-1 border-0"
+                                        style="z-index: 1050; display: none; border-radius: 12px; overflow: hidden;"></div>
+                                </div>
+                                <div id="loan-loading" class="d-none text-center mt-4">
+                                    <div class="spinner-grow text-primary"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="page-pengembalian" class="page-section d-none">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="glass-card p-3 text-center">
+                                <h6 class="fw-bold mb-3">SCANNER</h6>
+                                <div id="reader-return" class="rounded overflow-hidden border"></div>
+                                <div class="alert alert-warning mt-3 py-2 small"><i class="fas fa-info-circle"></i> Scan
+                                    / Ketik ID</div>
+                                <button class="btn btn-light btn-sm w-100" id="btn-reset-return">Reset</button>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="glass-card p-4 h-100">
+                                <h5 class="fw-bold text-warning mb-3">Pengembalian</h5>
+                                <div class="mb-3 position-relative">
+                                    <label class="small fw-bold" for="return-member-input">ID/NISN ANGGOTA</label>
+                                    <div class="input-group">
+                                        <input type="text" id="return-member-input" class="form-control"
+                                            placeholder="Ketik NISN atau Nama Siswa..." autocomplete="off">
+                                        <button class="btn btn-warning" onclick="handleManualMember('return')"><i
+                                                class="fas fa-search"></i></button>
+                                    </div>
+                                    <div id="return-member-suggestions" class="dropdown-menu shadow-lg w-100 p-0 mt-1 border-0"
+                                        style="z-index: 1050; display: none; border-radius: 12px; overflow: hidden;"></div>
+                                    <div id="return-member-name" class="mt-2 text-primary fw-bold"></div>
+                                </div>
+                                <div class="mb-3 opacity-50 position-relative" id="return-book-group">
+                                    <label class="small fw-bold" for="return-book-input">KODE BUKU</label>
+                                    <div class="input-group">
+                                        <input type="text" id="return-book-input" class="form-control"
+                                            placeholder="Ketik Kode atau Judul Buku..." disabled autocomplete="off">
+                                        <button class="btn btn-warning" id="btn-return-book"
+                                            onclick="handleManualBook('return')" disabled><i
+                                                class="fas fa-check"></i></button>
+                                    </div>
+                                    <div id="return-book-suggestions" class="dropdown-menu shadow-lg w-100 p-0 mt-1 border-0"
+                                        style="z-index: 1050; display: none; border-radius: 12px; overflow: hidden;"></div>
+                                </div>
+                                <div id="return-loading" class="d-none text-center mt-4">
+                                    <div class="spinner-grow text-warning"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="page-riwayat" class="page-section d-none">
+                    <div class="glass-card p-4">
+                        <div class="d-flex flex-column flex-md-row justify-content-between mb-3 gap-2">
+                            <h5 class="fw-bold"><i class="fas fa-history me-2"></i>Riwayat</h5>
+                            <input type="text" id="searchRiwayat" class="form-control w-100 w-md-25"
+                                placeholder="Cari..." onkeyup="filterRiwayat()">
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Anggota</th>
+                                        <th>Buku</th>
+                                        <th>Tanggal</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="riwayat-list-body"></tbody>
+                            </table>
+                        </div>
+                        <div class="d-flex justify-content-between mt-2">
+                            <span id="riwayat-page-info" class="small text-muted"></span>
+                            <div>
+                                <button class="btn btn-sm btn-outline-secondary" onclick="prevRiwayatPage()"><i
+                                        class="fas fa-chevron-left"></i></button>
+                                <button class="btn btn-sm btn-outline-secondary" onclick="nextRiwayatPage()"><i
+                                        class="fas fa-chevron-right"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="page-pengaturan" class="page-section d-none">
+                    <ul class="nav nav-pills mb-3 flex-wrap gap-2" id="settingTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active fw-bold" id="sistem-tab" data-bs-toggle="pill"
+                                data-bs-target="#sistem" type="button" role="tab"><i
+                                    class="fas fa-sliders-h me-1"></i>Sistem</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link fw-bold" id="logo-tab" data-bs-toggle="pill" data-bs-target="#logo"
+                                type="button" role="tab"><i class="fas fa-palette me-1"></i>Logo & Warna</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link fw-bold" id="medsos-tab" data-bs-toggle="pill"
+                                data-bs-target="#medsos" type="button" role="tab"><i
+                                    class="fas fa-share-alt me-1"></i>Media Sosial</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link fw-bold" id="akun-tab" data-bs-toggle="pill" data-bs-target="#akun"
+                                type="button" role="tab"><i class="fas fa-shield-alt me-1"></i>Keamanan Akun &
+                                Backup</button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content" id="settingTabsContent">
+                        <!-- TAB SETTING SISTEM -->
+                        <div class="tab-pane fade show active" id="sistem" role="tabpanel">
+                            <div class="row g-3">
+                                <div class="col-12">
+                                    <div class="glass-card p-4">
+                                        <h5 class="fw-bold text-primary mb-3"><i
+                                                class="fas fa-sliders-h me-2"></i>Aturan &
+                                            Identitas</h5>
+                                        <form id="formConfig">
+
+
+                                            <div class="row mb-2">
+                                                <div class="col-md-6"><label for="cfgInstansi"
+                                                        class="small fw-bold">Nama
+                                                        Instansi</label><input type="text" id="cfgInstansi"
+                                                        class="form-control" placeholder="PEMERINTAH PROVINSI....">
+                                                </div>
+                                                <div class="col-md-6"><label for="cfgNama" class="small fw-bold">Nama
+                                                        Sekolah</label><input type="text" id="cfgNama"
+                                                        class="form-control" placeholder="SMAN 1..."></div>
+                                            </div>
+
+                                            <div class="mb-3"><label for="cfgAlamat" class="small fw-bold">Alamat
+                                                    Lengkap
+                                                    Sekolah</label><textarea id="cfgAlamat" class="form-control"
+                                                    rows="2" placeholder="Jln. Raya Pendidikan No..."></textarea></div>
+
+                                            <div class="row">
+                                                <div class="col-6 mb-2"><label for="cfgHp" class="small fw-bold">No.
+                                                        HP/WA</label><input type="text" id="cfgHp" class="form-control">
+                                                </div>
+                                                <div class="col-6 mb-2"><label for="cfgWeb"
+                                                        class="small fw-bold">Website</label><input type="text"
+                                                        id="cfgWeb" class="form-control"></div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-6 mb-2"><label for="cfgEmail"
+                                                        class="small fw-bold">Email</label><input type="text"
+                                                        id="cfgEmail" class="form-control"></div>
+                                                <div class="col-6 mb-2"><label for="cfgFolder" class="small fw-bold">ID
+                                                        Folder
+                                                        Drive</label><input type="text" id="cfgFolder"
+                                                        class="form-control" placeholder="Kosongkan jika auto"></div>
+                                            </div>
+
+                                            <div class="mb-2"><label for="cfgRun" class="small fw-bold">Running
+                                                    Text</label><textarea id="cfgRun" class="form-control"
+                                                    rows="2"></textarea>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-6"><label for="cfgDenda" class="small fw-bold">Denda
+                                                        (Rp)</label><input type="number" id="cfgDenda"
+                                                        class="form-control">
+                                                </div>
+                                                <div class="col-6"><label for="cfgDurasi" class="small fw-bold">Durasi
+                                                        (Hari)</label><input type="number" id="cfgDurasi"
+                                                        class="form-control">
+                                                </div>
+                                            </div>
+                                            <button type="button"
+                                                class="btn btn-primary w-100 mt-4 py-2 fw-bold rounded-pill shadow-sm"
+                                                onclick="saveSettings()">SIMPAN PENGATURAN</button>
+                                        </form>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+
+                        <!-- TAB LOGO & WARNA -->
+                        <div class="tab-pane fade" id="logo" role="tabpanel">
+                            <div class="row g-3">
+                                <div class="col-12">
+                                    <div class="glass-card p-4">
+                                        <h5 class="fw-bold text-primary mb-3"><i
+                                                class="fas fa-palette me-2"></i>Pengaturan Logo & Warna</h5>
+                                        <form id="formLogoConfig">
+                                            <div class="row mb-3">
+                                                <div class="col-md-6">
+                                                    <div class="bg-light p-2 rounded border h-100">
+                                                        <label class="small fw-bold text-primary">Upload Logo Instansi
+                                                            (1:1)</label>
+                                                        <input type="file" id="fileLogoInstansi"
+                                                            class="form-control form-control-sm mb-2" accept="image/*">
+                                                        <input type="hidden" id="cfgLogoInstansi"> <img
+                                                            id="previewLogoInstansi" src="" class="rounded"
+                                                            style="max-height: 50px; display:none;">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 mt-2 mt-md-0">
+                                                    <div class="bg-light p-2 rounded border h-100">
+                                                        <label class="small fw-bold text-primary">Upload Logo Sekolah
+                                                            (1:1)</label>
+                                                        <input type="file" id="fileLogo"
+                                                            class="form-control form-control-sm mb-2" accept="image/*">
+                                                        <input type="hidden" id="cfgLogo"> <img id="previewLogo" src=""
+                                                            class="rounded" style="max-height: 50px; display:none;">
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="mb-3 bg-light p-2 rounded border">
+                                                <label class="small fw-bold text-primary">Upload Background Login
+                                                    (5:3)</label>
+                                                <input type="file" id="fileBg" class="form-control form-control-sm"
+                                                    accept="image/*">
+                                                <input type="hidden" id="cfgBg"> <img id="previewBg" src=""
+                                                    class="mt-2 rounded w-100"
+                                                    style="max-height: 80px; object-fit: cover; display:none;">
+                                            </div>
+                                            <div class="row mb-3 mt-3">
+                                                <h6 class="fw-bold text-primary mb-2 small">Warna Gradient Tema</h6>
+                                                <div class="col-md-4">
+                                                    <label class="small fw-bold text-muted">Warna 1</label>
+                                                    <input type="color" class="form-control form-control-color w-100"
+                                                        id="cfgColor1" value="#667eea">
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label class="small fw-bold text-muted">Warna 2</label>
+                                                    <input type="color" class="form-control form-control-color w-100"
+                                                        id="cfgColor2" value="#764ba2">
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label class="small fw-bold text-muted">Warna 3</label>
+                                                    <input type="color" class="form-control form-control-color w-100"
+                                                        id="cfgColor3" value="#6B8DD6">
+                                                </div>
+                                            </div>
+                                            <button type="button"
+                                                class="btn btn-primary w-100 mt-2 py-2 fw-bold rounded-pill shadow-sm"
+                                                onclick="saveSettings()">SIMPAN LOGO & WARNA</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TAB MEDIA SOSIAL (Baru) -->
+                        <div class="tab-pane fade" id="medsos" role="tabpanel">
+                            <div class="row g-3">
+                                <div class="col-12">
+                                    <div class="glass-card p-4">
+                                        <h5 class="fw-bold text-primary mb-2"><i
+                                                class="fas fa-share-alt me-2"></i>Pengaturan Link Media Sosial</h5>
+                                        <p class="text-muted small mb-4">Tautkan akun media sosial resmi sekolah Anda.
+                                            Link yang diisi di bawah ini akan otomatis muncul pada ikon media sosial di
+                                            footer halaman depan.</p>
+
+                                        <form id="formMedsosConfig">
+                                            <div class="row g-3">
+                                                <div class="col-md-6">
+                                                    <label for="cfgFb"
+                                                        class="small fw-bold text-dark d-flex align-items-center gap-2">
+                                                        <i class="fab fa-facebook text-primary fs-5"></i> Link Facebook
+                                                    </label>
+                                                    <input type="text" id="cfgFb" class="form-control"
+                                                        placeholder="https://facebook.com/namasekolah">
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label for="cfgIg"
+                                                        class="small fw-bold text-dark d-flex align-items-center gap-2">
+                                                        <i class="fab fa-instagram text-danger fs-5"></i> Link Instagram
+                                                    </label>
+                                                    <input type="text" id="cfgIg" class="form-control"
+                                                        placeholder="https://instagram.com/namasekolah">
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label for="cfgYt"
+                                                        class="small fw-bold text-dark d-flex align-items-center gap-2">
+                                                        <i class="fab fa-youtube text-danger fs-5"></i> Link YouTube
+                                                    </label>
+                                                    <input type="text" id="cfgYt" class="form-control"
+                                                        placeholder="https://youtube.com/@namasekolah">
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label for="cfgTiktok"
+                                                        class="small fw-bold text-dark d-flex align-items-center gap-2">
+                                                        <i class="fab fa-tiktok text-dark fs-5"></i> Link TikTok
+                                                    </label>
+                                                    <input type="text" id="cfgTiktok" class="form-control"
+                                                        placeholder="https://tiktok.com/@namasekolah">
+                                                </div>
+                                                <div class="col-12">
+                                                    <label for="cfgTwitter"
+                                                        class="small fw-bold text-dark d-flex align-items-center gap-2">
+                                                        <i class="fab fa-x-twitter text-dark fs-5"></i> Link Twitter / X
+                                                    </label>
+                                                    <input type="text" id="cfgTwitter" class="form-control"
+                                                        placeholder="https://x.com/namasekolah">
+                                                </div>
+                                            </div>
+
+                                            <button type="button"
+                                                class="btn btn-primary w-100 mt-4 py-2 fw-bold rounded-pill shadow-sm"
+                                                onclick="saveSettings()">SIMPAN MEDIA SOSIAL</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TAB KEAMANAN AKUN & BACKUP -->
+                        <div class="tab-pane fade" id="akun" role="tabpanel">
+                            <div class="row g-3">
+                                <!-- Akun Admin & Link Exec -->
+                                <div class="col-12">
+                                    <div class="glass-card p-3 mb-3">
+                                        <div class="d-flex align-items-center mb-2 gap-2">
+                                            <i class="fas fa-user-shield text-secondary"></i>
+                                            <h6 class="fw-bold text-secondary mb-0">Akun Admin</h6>
+                                            <span class="badge bg-secondary ms-auto" id="adminAccountBadge"><i
+                                                    class="fas fa-lock me-1"></i>Terlindungi</span>
+                                        </div>
+                                        <div id="offlineAccountWarning"
+                                            class="alert alert-secondary small py-2 mb-2 d-flex align-items-center gap-2">
+                                            <i class="fas fa-info-circle fs-5 text-secondary"></i>
+                                            <span>Demi keamanan, password akun <strong>Mode Offline</strong> tidak dapat
+                                                diubah melalui aplikasi.</span>
+                                        </div>
+                                        <div class="row g-2">
+                                            <div class="col-md-5">
+                                                <label class="small fw-bold text-muted">Username (Read Only)</label>
+                                                <input type="text"
+                                                    class="form-control form-control-sm bg-light text-muted"
+                                                    id="offlineUserDisplay" readonly>
+                                            </div>
+                                            <div class="col-md-5">
+                                                <label class="small fw-bold text-muted"
+                                                    id="passwordLabel">Password</label>
+                                                <input type="password" class="form-control form-control-sm"
+                                                    id="offlinePassDisplay">
+                                            </div>
+                                            <div class="col-md-2 d-flex align-items-end" id="btnUpdateAccountContainer">
+                                                <button class="btn btn-primary btn-sm w-100 fw-bold"
+                                                    onclick="updateAccount()">Simpan</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="glass-card p-3 mb-3">
+                                        <div class="d-flex align-items-center mb-2 gap-2">
+                                            <i class="fas fa-link text-secondary"></i>
+                                            <h6 class="fw-bold text-secondary mb-0">Link Exec Apps Script (Read Only)
+                                            </h6>
+                                        </div>
+                                        <div class="input-group input-group-sm">
+                                            <input type="text" class="form-control bg-light text-muted"
+                                                id="offlineExecLinkDisplay" readonly>
+                                            <button class="btn btn-outline-secondary" type="button"
+                                                onclick="copyExecLink()"><i class="fas fa-copy"></i> Salin</button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Backup & Restore Dipindahkan ke Sini -->
+                                    <div class="glass-card p-4 text-center">
+                                        <div class="d-flex align-items-center mb-2 gap-2 justify-content-center">
+                                            <i class="fas fa-database text-info"></i>
+                                            <h5 class="fw-bold text-dark mb-0">Backup & Restore Database (Offline)</h5>
+                                        </div>
+                                        <p class="text-muted small mb-4">Gunakan fitur ini untuk mencadangkan seluruh
+                                            data Anda secara lokal (format JSON) sebagai cadangan keamanan berkala, atau
+                                            memulihkannya jika aplikasi diinstal ulang.</p>
+
+                                        <div class="row g-3 justify-content-center">
+                                            <div class="col-md-6">
+                                                <div class="border rounded-4 p-4 bg-light h-100 shadow-xs">
+                                                    <i class="fas fa-download fa-3x text-primary mb-3"></i>
+                                                    <h6 class="fw-bold text-dark">Backup Data (JSON)</h6>
+                                                    <p class="small text-muted mb-3">Unduh semua data (Buku, Anggota,
+                                                        Riwayat, Pengaturan) ke komputer Anda.</p>
+                                                    <button class="btn btn-primary w-100 rounded-pill fw-bold"
+                                                        onclick="backupDataJSON()">
+                                                        <i class="fas fa-save me-1"></i> Mulai Backup
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="border rounded-4 p-4 bg-light h-100 shadow-xs">
+                                                    <i class="fas fa-upload fa-3x text-success mb-3"></i>
+                                                    <h6 class="fw-bold text-dark">Restore Data (JSON)</h6>
+                                                    <p class="small text-muted mb-3">Pulihkan data lokal dari file
+                                                        backup JSON yang pernah Anda simpan sebelumnya.</p>
+                                                    <input type="file" id="fileRestoreJSON" accept=".json"
+                                                        style="display:none" onchange="restoreDataJSON(this)">
+                                                    <button class="btn btn-success w-100 rounded-pill fw-bold"
+                                                        onclick="document.getElementById('fileRestoreJSON').click()">
+                                                        <i class="fas fa-folder-open me-1"></i> Pilih File Restore
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="page-buku" class="page-section d-none">
+                    <div class="glass-card p-4">
+                        <div class="d-flex flex-column gap-3 mb-4 w-100">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="fw-bold text-primary mb-0">Data Buku</h5>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-success btn-sm shadow-sm fw-bold"
+                                        onclick="openImportModal('buku')">
+                                        <i class="fas fa-file-upload"></i> Import Excel
+                                    </button>
+                                    <button class="btn btn-primary btn-sm shadow-sm fw-bold" onclick="openBookModal()">
+                                        <i class="fas fa-plus"></i> Tambah Buku
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div
+                                class="d-flex flex-column flex-md-row justify-content-between align-items-md-center bg-light p-2 rounded border gap-2">
+                                <div class="d-flex align-items-center gap-2 w-100 w-md-auto">
+                                    <label class="small fw-bold text-muted mb-0"><i class="fas fa-filter"></i>
+                                        Tahun:</label>
+                                    <div class="input-group input-group-sm" style="max-width: 250px;">
+                                        <input type="number" id="filterTahunExport" class="form-control"
+                                            placeholder="Ketik Tahun">
+                                        <button class="btn btn-primary fw-bold" onclick="applyFilterBuku()"><i
+                                                class="fas fa-search"></i> Terapkan</button>
+                                    </div>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-info btn-sm text-white shadow-sm fw-bold"
+                                        onclick="printAllLabels()">
+                                        <i class="fas fa-print"></i> Cetak Semua
+                                    </button>
+                                    <button class="btn btn-secondary btn-sm shadow-sm fw-bold"
+                                        onclick="exportData('buku')">
+                                        <i class="fas fa-file-export"></i> Export
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0 align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Kode</th>
+                                        <th>Judul Buku</th>
+                                        <th>Penerbit</th>
+                                        <th class="text-center">Stok Total</th>
+                                        <th class="text-center">Sisa</th>
+                                        <th class="text-end">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="book-list-body"></tbody>
+                            </table>
+                        </div>
+                        <div class="d-flex justify-content-between mt-2">
+                            <span id="book-page-info" class="small text-muted"></span>
+                            <div>
+                                <button class="btn btn-sm btn-outline-secondary" onclick="prevBookPage()"><i
+                                        class="fas fa-chevron-left"></i></button>
+                                <button class="btn btn-sm btn-outline-secondary" onclick="nextBookPage()"><i
+                                        class="fas fa-chevron-right"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="page-anggota" class="page-section d-none">
+                    <div class="glass-card p-4">
+                        <div class="d-flex flex-column gap-3 mb-4 w-100">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="fw-bold text-primary mb-0">Data Anggota</h5>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-success btn-sm shadow-sm fw-bold"
+                                        onclick="openImportModal('anggota')">
+                                        <i class="fas fa-file-upload"></i> Import Excel
+                                    </button>
+                                    <button class="btn btn-primary btn-sm shadow-sm fw-bold"
+                                        onclick="openMemberModal()">
+                                        <i class="fas fa-plus"></i> Tambah Anggota
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div
+                                class="d-flex flex-column flex-md-row justify-content-between align-items-md-center bg-light p-2 rounded border gap-2">
+                                <div class="d-flex align-items-center gap-2 w-100 w-md-auto">
+                                    <label class="small fw-bold text-muted mb-0"><i class="fas fa-filter"></i>
+                                        Kelas:</label>
+                                    <select id="filterKelasExport" class="form-select form-select-sm"
+                                        style="min-width: 150px;" onchange="applyFilterAnggota()">
+                                        <option value="">Memuat Kelas...</option>
+                                    </select>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-info btn-sm text-white shadow-sm fw-bold"
+                                        onclick="printAllCards()">
+                                        <i class="fas fa-print"></i> Cetak Semua
+                                    </button>
+                                    <button class="btn btn-secondary btn-sm shadow-sm fw-bold"
+                                        onclick="exportData('anggota')">
+                                        <i class="fas fa-file-export"></i> Export
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>ID/NISN</th>
+                                        <th>Nama</th>
+                                        <th>Kelas</th>
+                                        <th>No. HP</th>
+                                        <th>Tgl Lahir</th>
+                                        <th class="text-end">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="member-list-body"></tbody>
+                            </table>
+                        </div>
+                        <div class="d-flex justify-content-between mt-2">
+                            <span id="member-page-info" class="small text-muted"></span>
+                            <div>
+                                <button class="btn btn-sm btn-outline-secondary" onclick="prevMemberPage()"><i
+                                        class="fas fa-chevron-left"></i></button>
+                                <button class="btn btn-sm btn-outline-secondary" onclick="nextMemberPage()"><i
+                                        class="fas fa-chevron-right"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <footer class="mt-4 small container">
+                <div class="text-center text-muted mb-2">
+                    <span id="sidebar-footer-text">© 2026 SiE-MPuS | All Rights Reserved.</span>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center border-top pt-2">
+                    <div>
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#modalPrivasi"
+                            class="text-decoration-none text-primary fw-bold" style="font-size: 11px;">
+                            <i class="fas fa-shield-alt me-1"></i>Kebijakan Privasi</a>
+                    </div>
+
+                    <div class="text-muted text-end" style="font-size: 11px;">
+                        Powered by : <a href='https://www.farypin-inovasiteknologi.com' target='_blank' rel='dofollow'
+                            class="fw-bold" style='color:blue; text-decoration:none;'>PT Farypin Inovasi Teknologi</a>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <input type="file" id="fileInput" accept=".xlsx, .xls" style="display:none" onchange="processImport(this)">
+
+    <div class="modal fade" id="modalCrop" data-bs-backdrop="static" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title"><i class="fas fa-crop-alt me-2"></i>Potong Gambar</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center bg-light">
+                    <div
+                        style="max-height: 400px; overflow: hidden; display: flex; justify-content: center; align-items: center;">
+                        <img id="imageToCrop" style="max-width: 100%; display: block;">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-primary px-4 fw-bold" id="btnApplyCrop">TERAPKAN</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalBuku">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">Form Buku</h5>
+                    <button class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formBuku">
+                        <div class="mb-2"><label for="bKode">Kode</label><input type="text" class="form-control"
+                                id="bKode" required></div>
+                        <div class="mb-2">
+                            <label for="bJudul">Judul</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="bJudul"
+                                    placeholder="Ketik judul, misal: Laskar Pelangi" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6"><label for="bPengarang">Pengarang</label><input type="text"
+                                    class="form-control" id="bPengarang" required></div>
+                            <div class="col-6"><label for="bPenerbit">Penerbit</label><input type="text"
+                                    class="form-control" id="bPenerbit" required></div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-4"><label for="bTahun">Tahun Pengadaan</label><input type="number"
+                                    class="form-control" id="bTahun" required></div>
+                            <div class="col-4"><label for="bKategori">Kategori</label><input type="text"
+                                    class="form-control" id="bKategori" required></div>
+                            <div class="col-4"><label for="bStok">Stok Total</label><input type="number"
+                                    class="form-control" id="bStok" required></div>
+                        </div>
+                        <input type="hidden" id="bIsEdit">
+                        <input type="hidden" id="bOldKode">
+                    </form>
+                </div>
+                <div class="modal-footer"><button class="btn btn-primary w-100" onclick="submitBuku()">SIMPAN</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalAnggota">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title">Form Anggota</h5>
+                    <button class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formAnggota">
+                        <div class="mb-2"><label for="mId">ID/NISN</label> <input type="text" class="form-control"
+                                id="mId" onblur="formatNISN()" oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                                maxlength="10" required></div>
+                        <div class="mb-2"><label for="mNama">Nama</label><input type="text" class="form-control"
+                                id="mNama" required></div>
+                        <div class="row mb-2">
+                            <div class="col-6"><label for="mKelas">Kelas</label><input type="text" class="form-control"
+                                    id="mKelas" required></div>
+                            <div class="col-6"><label for="mJk">JK</label>
+                                <select class="form-select" id="mJk" required>
+                                    <option value="L">L</option>
+                                    <option value="P">P</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-2"><label for="mHp">No. HP / WA</label><input type="text" class="form-control"
+                                id="mHp" placeholder="628xxx"></div>
+                        <div class="mb-2"><label for="mTgl">Tgl Lahir</label><input type="date" class="form-control"
+                                id="mTgl" required></div>
+                        <input type="hidden" id="mIsEdit">
+                        <input type="hidden" id="mOldId">
+                    </form>
+                </div>
+                <div class="modal-footer"><button class="btn btn-primary w-100"
+                        onclick="submitAnggota()">SIMPAN</button></div>
+            </div>
+        </div>
+    </div>
+
+    <button type="button" class="btn btn-primary text-white" id="btn-back-to-top" onclick="scrollToTop()">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <div class="modal fade" id="modalPrivasi" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content glass-card border-0">
+                <div class="modal-header bg-white border-bottom-0">
+                    <h5 class="modal-title fw-bold text-primary"><i class="fas fa-shield-alt me-2"></i>Kebijakan Privasi
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-secondary" style="font-size: 0.9rem;">
+                    <p><strong>1. Pendahuluan</strong><br>Aplikasi SiE-MPuS (Sistem e-Manajemen Perpustakaan Sekolah)
+                        menghargai privasi data anggota dan pengguna perpustakaan sekolah.</p>
+                    <p><strong>2. Pengumpulan Data</strong><br>Kami hanya mengumpulkan data (NISN, Nama, Kelas) untuk
+                        keperluan sirkulasi peminjaman buku.</p>
+                    <p><strong>3. Keamanan Data</strong><br>Data disimpan secara aman dalam lingkungan Google Workspace
+                        sekolah dan tidak dibagikan ke pihak luar.</p>
+                    <div class="alert alert-light border mt-3 small">
+                        <i class="fas fa-info-circle me-1"></i> Update Terakhir: Januari 2026
+                    </div>
+                </div>
+                <div class="modal-footer border-top-0">
+                    <button type="button" class="btn btn-primary w-100 rounded-pill" data-bs-dismiss="modal">Saya
+                        Mengerti</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="modal fade" id="modalImport" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title fw-bold"><i class="fas fa-file-excel me-2"></i>Import Data <span
+                            id="importTitle"></span></h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center p-4">
+                    <i class="fas fa-cloud-upload-alt fa-4x text-success mb-3"></i>
+                    <p class="text-muted small mb-4" id="importDesc">Pastikan format data di Excel sudah sesuai dengan
+                        template sebelum melakukan upload agar tidak terjadi error.</p>
+
+                    <div id="importSourceContainer" class="mb-3 text-start" style="display:none;">
+                        <label class="form-label fw-bold small text-muted">Sumber Data Excel</label>
+                        <select class="form-select" id="importSourceSelect" onchange="toggleImportSource()">
+                            <option value="sistem">Import Template Sistem (Standar)</option>
+                            <option value="dapodik">Import Excel Dapodik (daftar_pd)</option>
+                        </select>
+                    </div>
+
+                    <div class="d-grid gap-3">
+                        <button class="btn btn-outline-success fw-bold py-2" id="btnDownloadTemplate"
+                            onclick="downloadCurrentTemplate()">
+                            <i class="fas fa-download me-2"></i>1. Unduh Template Excel Sistem (Standar)
+                        </button>
+                        <button class="btn btn-success fw-bold py-2 shadow-sm" onclick="triggerActualImport()">
+                            <i class="fas fa-upload me-2"></i><span id="btnUploadText">2. Upload File Excel
+                                (Import)</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="pwa-install-banner" class="shadow-lg bg-white"
+        style="position: fixed; bottom: 0; left: 0; width: 100%; z-index: 9999; border-radius: 20px 20px 0 0; padding: 15px 20px; padding-bottom: calc(15px + env(safe-area-inset-bottom)); transform: translateY(150%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; align-items: center; justify-content: space-between;">
+
+        <div class="d-flex align-items-center gap-3">
+            <img id="pwa-banner-logo" src="./imgsiempus.png" alt="Logo"
+                style="width: 45px; height: 45px; border-radius: 12px; object-fit: contain; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+            <div>
+                <h6 id="pwa-banner-title" class="mb-0 fw-bold text-dark" style="font-size: 14px;">SiE-MPuS</h6>
+                <small class="text-muted" style="font-size: 11px;">Akses lebih cepat di layar utama</small>
+            </div>
+        </div>
+
+        <div class="d-flex align-items-center gap-2">
+            <button id="btn-pwa-install"
+                class="btn btn-primary btn-sm fw-bold rounded-pill px-3 shadow-sm">Install</button>
+            <button id="btn-pwa-close" class="btn btn-light btn-sm rounded-circle text-muted"
+                style="width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center;">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+
+
+
+    <script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../node_modules/sweetalert2/dist/sweetalert2.all.min.js"></script>
+    <script src="../node_modules/chart.js/dist/chart.umd.js"></script>
+    <script src="../node_modules/qrcodejs2/qrcode.min.js"></script>
+    <script src="./vendor/html5-qrcode/html5-qrcode.min.js"></script>
+    <script src="./js/config.js"></script>
+    <script src="./js/db.js"></script>
+    <script src="./js/api.js"></script>
+    <script src="./js/ui.js"></script>
+    <script src="./js/app.js"></script>
+</body>
+
+</html>
