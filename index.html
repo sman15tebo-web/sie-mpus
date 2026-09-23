@@ -510,6 +510,31 @@
                 </div>
             </div>
         </footer>
+
+        <!-- ===== BOTTOM NAV LANDING (MOBILE ONLY) ===== -->
+        <nav class="landing-bottom-nav d-lg-none" id="landingBottomNav">
+            <!-- Kiri: Katalog -->
+            <div class="lbn-item" onclick="scrollToKatalog(); return false;">
+                <i class="fas fa-book-open"></i>
+                <span>Katalog</span>
+            </div>
+
+            <!-- Tengah: Beranda (Floating FAB) -->
+            <div class="lbn-item lbn-home" onclick="showLandingPage(); return false;">
+                <div class="lbn-fab">
+                    <i class="fas fa-home"></i>
+                </div>
+                <span>Beranda</span>
+            </div>
+
+            <!-- Kanan: Login -->
+            <div class="lbn-item lbn-login" onclick="showLoginPage()">
+                <i class="fas fa-sign-in-alt"></i>
+                <span>Login</span>
+            </div>
+        </nav>
+        <!-- ===== END BOTTOM NAV LANDING ===== -->
+
     </div>
     <!-- ================= END LANDING PAGE ================= -->
 
