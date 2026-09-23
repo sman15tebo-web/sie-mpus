@@ -358,11 +358,12 @@ function loadAppConfig() {
             let cfg = (rawCfg && rawCfg.data && typeof rawCfg.data === 'object' && !Array.isArray(rawCfg.data)) ? rawCfg.data : (rawCfg || {});
 
             // Cek snapshot local offline jika ada field yang belum terbawa
+            // PENTING: localSavedCfg (pengaturan yang baru disimpan user) harus MENANG atas cfg (cache lama server)
             try {
                 const localSavedCfgStr = localStorage.getItem('offline_app_config');
                 if (localSavedCfgStr) {
                     const localSavedCfg = JSON.parse(localSavedCfgStr);
-                    cfg = Object.assign({}, localSavedCfg, cfg);
+                    cfg = Object.assign({}, cfg, localSavedCfg); // localSavedCfg di belakang = prioritas lebih tinggi
                 }
             } catch (e) {}
 
@@ -1813,6 +1814,13 @@ function saveSettings() {
                 };
                 localStorage.setItem('offline_app_config', JSON.stringify(currentSavedCfg));
 
+                // Mode Electron: simpan juga ke SQLite agar persisten antar restart
+                // Key harus sama dengan yang dibuat apiHelper saat getAppConfig dipanggil
+                if (window.isElectron && window.electronAPI && window.electronAPI.saveToLocalDB) {
+                    const gasConfigKey = 'getAppConfig_{"action":"getAppConfig"}';
+                    window.electronAPI.saveToLocalDB('cache', gasConfigKey, { key: gasConfigKey, data: currentSavedCfg });
+                }
+
                 Swal.fire({ title: 'Berhasil', text: 'Pengaturan tersimpan.', icon: 'success' }).then(() => {
                     // Kosongkan memori gambar setelah sukses simpan
                     if (typeof uploadBgBase64 !== 'undefined') uploadBgBase64 = null;
@@ -1881,10 +1889,12 @@ function processImport(i) {
 
             google.script.run
                 .withFailureHandler(err => {
+                    if (typeof swalCountdownInterval !== 'undefined') clearInterval(swalCountdownInterval);
                     handleNetworkError(err);
                     i.value = '';
                 })
                 .withSuccessHandler(res => {
+                    if (typeof swalCountdownInterval !== 'undefined') clearInterval(swalCountdownInterval);
                     if (res.status) {
                         invalidateSmartCache();
                         if (importType === 'buku') {
@@ -1904,6 +1914,7 @@ function processImport(i) {
                     i.value = '';
                 }).processExcelData(importType, chosenSheetData);
         } catch (err) {
+            if (typeof swalCountdownInterval !== 'undefined') clearInterval(swalCountdownInterval);
             console.error('Error saat membaca Excel:', err);
             Swal.fire('Error', 'Gagal memproses file Excel: ' + (err.message || err), 'error');
             i.value = '';
