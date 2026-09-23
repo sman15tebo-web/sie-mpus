@@ -700,6 +700,7 @@ function apiHelper() {
                     let target = (typeof API_URL !== 'undefined') ? API_URL : '';
                     if (!target || target.includes('.....')) {
                         if (typeof swalCountdownInterval !== 'undefined') clearInterval(swalCountdownInterval);
+                        if (typeof Swal !== 'undefined') Swal.close();
                         if (failCb) failCb('URL server sekolah belum dikonfigurasi. Pastikan parameter ?id= pada URL sudah benar.');
                         return;
                     }
@@ -712,10 +713,12 @@ function apiHelper() {
                     .then(r => r.json())
                     .then(resData => {
                         if (typeof swalCountdownInterval !== 'undefined') clearInterval(swalCountdownInterval);
+                        if (typeof Swal !== 'undefined') Swal.close();
                         if (successCb) successCb(resData);
                     })
                     .catch(err => {
                         if (typeof swalCountdownInterval !== 'undefined') clearInterval(swalCountdownInterval);
+                        if (typeof Swal !== 'undefined') Swal.close();
                         if (failCb) failCb(err);
                     });
                     return; // Selesai mode online
@@ -727,6 +730,7 @@ function apiHelper() {
                 await new Promise(r => setTimeout(r, 600));
 
                 if (typeof swalCountdownInterval !== 'undefined') clearInterval(swalCountdownInterval);
+                if (typeof Swal !== 'undefined') Swal.close();
                 let dummyPeminjam = 'Offline User';
                 let dummyJudul = 'Offline Book';
                 let dummyTglKembali = '-';
