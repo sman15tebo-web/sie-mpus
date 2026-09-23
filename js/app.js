@@ -651,6 +651,7 @@ function attemptLogin() {
     }
     // -------------------------
 
+    // Mode Online Web: google.script.run otomatis dialihkan ke apiHelper() via shim di api.js
     google.script.run
         .withFailureHandler(err => {
             btn.innerHTML = 'Login Sistem'; btn.disabled = false;
