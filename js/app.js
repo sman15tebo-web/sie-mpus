@@ -205,9 +205,20 @@ function openCropper(e, target, ratio) {
 
 document.getElementById('btnApplyCrop').addEventListener('click', function () {
     if (!cropperInstance) return;
+    const MAX_BASE64_LEN = 49000;
     if (currentCropTarget === 'logo' || currentCropTarget === 'logoInstansi') {
-        const canvas = cropperInstance.getCroppedCanvas({ width: 200, height: 200 });
-        const resultBase64 = canvas.toDataURL('image/png');
+        let size = 300;
+        let canvas = cropperInstance.getCroppedCanvas({ width: size, height: size });
+        let resultBase64 = canvas.toDataURL('image/png');
+        
+        let attempts = 0;
+        while (resultBase64.length > MAX_BASE64_LEN && size > 150 && attempts < 10) {
+            size -= 20;
+            canvas = cropperInstance.getCroppedCanvas({ width: size, height: size });
+            resultBase64 = canvas.toDataURL('image/png');
+            attempts++;
+        }
+
         if (currentCropTarget === 'logo') {
             uploadLogoBase64 = resultBase64;
             document.getElementById('previewLogo').src = uploadLogoBase64; document.getElementById('previewLogo').style.display = 'block';
@@ -216,8 +227,25 @@ document.getElementById('btnApplyCrop').addEventListener('click', function () {
             document.getElementById('previewLogoInstansi').src = uploadLogoInstansiBase64; document.getElementById('previewLogoInstansi').style.display = 'block';
         }
     } else {
-        const canvas = cropperInstance.getCroppedCanvas({ width: 1280, height: 768 });
-        uploadBgBase64 = canvas.toDataURL('image/jpeg', 0.8);
+        let w = 1280, h = 768, q = 0.8;
+        let canvas = cropperInstance.getCroppedCanvas({ width: w, height: h });
+        let resultBase64 = canvas.toDataURL('image/jpeg', q);
+        
+        let attempts = 0;
+        while (resultBase64.length > MAX_BASE64_LEN && w > 400 && attempts < 15) {
+            if (q > 0.4) {
+                q -= 0.15;
+            } else {
+                w = Math.floor(w * 0.8);
+                h = Math.floor(h * 0.8);
+                canvas = cropperInstance.getCroppedCanvas({ width: w, height: h });
+                q = 0.7;
+            }
+            resultBase64 = canvas.toDataURL('image/jpeg', q);
+            attempts++;
+        }
+
+        uploadBgBase64 = resultBase64;
         document.getElementById('previewBg').src = uploadBgBase64; document.getElementById('previewBg').style.display = 'block';
     }
     bootstrap.Modal.getInstance(document.getElementById('modalCrop')).hide();
