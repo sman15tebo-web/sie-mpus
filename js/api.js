@@ -211,46 +211,46 @@ function apiHelper() {
         const isReadAction = ['getAppConfig', 'getBookList', 'getMemberList', 'getDashboardStats', 'getHistoryList', 'getExportHistoryByDate', 'checkMember', 'getAllDataForExport', 'loginUser'].includes(action);
 
         if (isReadAction) {
-            // Penanganan Khusus Login: Offline Desktop vs Online Web
-            if (action === 'loginUser') {
-                if (window.isElectron) {
-                    let offUser = 'admin';
-                    let offPass = 'admin123';
-                    if (window.electronAPI && typeof window.electronAPI.getConfig === 'function') {
-                        const c = window.electronAPI.getConfig();
-                        if (c.OFFLINE_ADMIN_USER) offUser = c.OFFLINE_ADMIN_USER;
-                        if (c.OFFLINE_ADMIN_PASS) offPass = c.OFFLINE_ADMIN_PASS;
-                    }
-                    const inputU = (payload.username || '').trim();
-                    const inputP = (payload.password || '').trim();
-
-                    const match = (inputU.toLowerCase() === offUser.toLowerCase() && inputP === offPass) ||
-                                  ((inputU.toLowerCase() === 'admin' || inputU.toLowerCase() === offUser.toLowerCase()) && (inputP === offPass || inputP === 'admin' || inputP === 'admin123'));
-
-                    if (match) {
-                        if (successCb) successCb({ status: true, nama: 'Admin', username: inputU });
-                    } else {
-                        if (successCb) successCb({ status: false, message: 'Username atau Password salah (Mode Offline). Kredensial aktif: ' + offUser });
-                    }
-                    return; // Selesai offline
-                } else {
-                    // Mode Online (Web / GitHub Pages)
-                    let target = (typeof API_URL !== 'undefined') ? API_URL : '';
-                    if (!target || target.includes('.....')) {
-                        if (failCb) failCb("URL server sekolah belum dikonfigurasi pada daftarSekolah di config.js atau parameter ?id= belum sesuai.");
-                        return;
-                    }
-                    let payloadWithAction = { action: action, ...payload };
-                    fetch(target, {
-                        redirect: 'follow', method: 'POST',
-                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                        body: JSON.stringify(payloadWithAction)
-                    })
-                    .then(r => r.json())
-                    .then(data => { if (successCb) successCb(data); else console.log(data); })
-                    .catch(err => { if (failCb) failCb(err); else console.error(err); });
+            // MODE ONLINE (Web/GitHub Pages): Semua read action langsung ambil dari server
+            if (!window.isElectron) {
+                let target = (typeof API_URL !== 'undefined') ? API_URL : '';
+                if (!target || target.includes('.....')) {
+                    if (failCb) failCb("URL server sekolah belum dikonfigurasi pada daftarSekolah di config.js atau parameter ?id= belum sesuai.");
                     return;
                 }
+                let payloadWithAction = { action: action, ...payload };
+                fetch(target, {
+                    redirect: 'follow', method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(payloadWithAction)
+                })
+                .then(r => r.json())
+                .then(data => { if (successCb) successCb(data); else console.log(data); })
+                .catch(err => { if (failCb) failCb(err); else console.error(err); });
+                return;
+            }
+
+            // Penanganan Khusus Login OFFLINE Desktop
+            if (action === 'loginUser') {
+                let offUser = 'admin';
+                let offPass = 'admin123';
+                if (window.electronAPI && typeof window.electronAPI.getConfig === 'function') {
+                    const c = window.electronAPI.getConfig();
+                    if (c.OFFLINE_ADMIN_USER) offUser = c.OFFLINE_ADMIN_USER;
+                    if (c.OFFLINE_ADMIN_PASS) offPass = c.OFFLINE_ADMIN_PASS;
+                }
+                const inputU = (payload.username || '').trim();
+                const inputP = (payload.password || '').trim();
+
+                const match = (inputU.toLowerCase() === offUser.toLowerCase() && inputP === offPass) ||
+                              ((inputU.toLowerCase() === 'admin' || inputU.toLowerCase() === offUser.toLowerCase()) && (inputP === offPass || inputP === 'admin' || inputP === 'admin123'));
+
+                if (match) {
+                    if (successCb) successCb({ status: true, nama: 'Admin', username: inputU });
+                } else {
+                    if (successCb) successCb({ status: false, message: 'Username atau Password salah (Mode Offline). Kredensial aktif: ' + offUser });
+                }
+                return; // Selesai offline
             }
 
             try {
