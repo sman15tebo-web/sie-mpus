@@ -60,11 +60,11 @@ function showSmartLoading(title, desc) {
 }
 
 const handleNetworkError = (err) => {
-    console.error(err);
+    console.error("Network/API Error:", err);
     if (swalCountdownInterval) clearInterval(swalCountdownInterval);
-    Swal.close();
+    // Jangan gunakan Swal.close() di sini karena bisa bentrok dengan Swal.fire() berikutnya
     document.querySelectorAll('.spinner-border, .spinner-grow').forEach(el => el.parentElement.classList.add('d-none'));
-    Swal.fire('Koneksi Gagal', 'Terjadi kesalahan jaringan atau server lambat. Pastikan internet Anda stabil lalu coba lagi.', 'error');
+    Swal.fire('Koneksi Gagal', 'Terjadi kesalahan jaringan atau server merespon tidak terduga. Pastikan internet Anda stabil lalu coba lagi.', 'error');
 };
 
 function safeIsoDate(val) {
