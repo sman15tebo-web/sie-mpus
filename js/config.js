@@ -22,7 +22,7 @@ function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
 
 // 1. Buat "Buku Telepon" yang berisi daftar sekolah dan link Backend-nya masing-masing
 const daftarSekolah = {
-    "sman15tebo": "https://script.google.com/macros/s/AKfycbwFivYc-q2ZrU2NO91OXMkmVM7lLy5-rMUu4HxuoDuFtJFvVQQdw_VTOqxCIMDwm_Rm/exec",
+    "sman15tebo": "https://script.google.com/macros/s/AKfycbwjSZop3gW4G-kSsW1FRTGKBkeCUZxrxOwVMxqRlke7F7aQgyJ90JWcgaNZoJRYifms/exec",
     "demo": "https://script.google.com/macros/s/AKfycbwFivYc-q2ZrU2NO91OXMkmVM7lLy5-rMUu4HxuoDuFtJFvVQQdw_VTOqxCIMDwm_Rm/exec"
 };
 
