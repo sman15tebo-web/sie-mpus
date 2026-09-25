@@ -372,9 +372,20 @@ function loadAppConfig() {
             const localLogoInstansi = localStorage.getItem('offline_logoinstansi_base64');
             const localBg = localStorage.getItem('offline_bg_base64') || localStorage.getItem('offline_bg_url');
             
-            const logoSrc = localLogo || cfg.UrlLogo || cfg.LogoBase64;
-            const bgSrc = localBg || cfg.UrlBackground || cfg.BackgroundBase64;
-            const logoInstansiSrc = localLogoInstansi || cfg.UrlLogoInstansi;
+            function fixDriveLink(url) {
+                if (!url) return '';
+                if (url.includes('drive.google.com') && url.includes('/d/')) {
+                    const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+                    if (match && match[1]) {
+                        return `https://drive.google.com/uc?id=${match[1]}`;
+                    }
+                }
+                return url;
+            }
+
+            const logoSrc = fixDriveLink(localLogo || cfg.UrlLogo || cfg.LogoBase64);
+            const bgSrc = fixDriveLink(localBg || cfg.UrlBackground || cfg.BackgroundBase64);
+            const logoInstansiSrc = fixDriveLink(localLogoInstansi || cfg.UrlLogoInstansi);
 
             const fallback = 'https://cdn-icons-png.flaticon.com/512/2232/2232688.png';
             if (logoSrc) {
@@ -898,7 +909,14 @@ function handleScan(decodedText, type) {
         if (inpMember.value === '') {
             inpMember.value = decodedText;
             handleManualMember('loan');
-            setTimeout(() => { scanLock = false; }, 2000);
+            Swal.fire({
+                title: 'Siswa Terekam',
+                text: 'Data siswa sudah terekam, silakan lanjut untuk scan buku.',
+                icon: 'info',
+                confirmButtonText: 'OK'
+            }).then(() => {
+                scanLock = false;
+            });
         } else {
             inpBook.value = decodedText;
             handleManualBook('loan');
@@ -910,7 +928,14 @@ function handleScan(decodedText, type) {
         if (inpMember.value === '') {
             inpMember.value = decodedText;
             handleManualMember('return');
-            setTimeout(() => { scanLock = false; }, 2000);
+            Swal.fire({
+                title: 'Siswa Terekam',
+                text: 'Data siswa sudah terekam, silakan lanjut untuk scan buku.',
+                icon: 'info',
+                confirmButtonText: 'OK'
+            }).then(() => {
+                scanLock = false;
+            });
         } else {
             inpBook.value = decodedText;
             handleManualBook('return');
@@ -1295,9 +1320,54 @@ function handleManualBook(t) {
                 const bookGroup = document.getElementById(t + '-book-group');
                 if (bookGroup) bookGroup.classList.add('opacity-50');
                 if (t === 'loan') {
-                    Swal.fire({ title: 'Peminjaman Sukses!', html: `<div style="text-align:left;"><p><strong>Peminjam:</strong> ${r.peminjam}</p><p><strong>Buku:</strong> ${r.judul}</p><hr><p class="text-danger"><strong>Jatuh Tempo:</strong> ${r.tglKembali}</p></div>`, icon: 'success' });
+                    Swal.fire({
+                        title: 'Peminjaman Berhasil! 🎉',
+                        html: `
+                        <div style="text-align:center; padding: 10px;">
+                            <h4 style="color: #4361ee; font-weight: bold; font-size: 1.5rem;">${r.peminjam}</h4>
+                            <p style="font-size: 1.2rem; color: #333; margin-top: 10px;">Telah meminjam buku:</p>
+                            <div style="background: #e0f2fe; padding: 15px; border-radius: 15px; border: 2px solid #b6e3ff; margin: 15px 0;">
+                                <h5 style="color: #023e8a; font-weight: bold; margin:0; font-size: 1.4rem;">${r.judul}</h5>
+                            </div>
+                            <div style="background: #fff0f3; border: 2px dashed #ffb3c1; padding: 10px; border-radius: 10px; display: inline-block;">
+                                <p style="font-size: 1.2rem; color: #d90429; font-weight: bold; margin: 0;">
+                                    <i class="fas fa-calendar-times me-2"></i> Jatuh Tempo: ${r.tglKembali}
+                                </p>
+                            </div>
+                        </div>`,
+                        icon: 'success',
+                        width: '600px',
+                        padding: '2em',
+                        background: '#ffffff',
+                        backdrop: `rgba(0,0,123,0.4)`
+                    });
                 } else {
-                    Swal.fire({ title: 'Pengembalian Sukses!', html: `<div style="text-align:left;"><p><strong>Peminjam:</strong> ${r.peminjam}</p><p><strong>Buku:</strong> ${r.judul}</p><hr><p><strong>Denda:</strong> <span class="badge bg-danger">${r.denda}</span></p><p><strong>Keterlambatan:</strong> ${r.terlambat}</p></div>`, icon: 'success' });
+                    Swal.fire({
+                        title: 'Pengembalian Berhasil! ✅',
+                        html: `
+                        <div style="text-align:center; padding: 10px;">
+                            <h4 style="color: #2b9348; font-weight: bold; font-size: 1.5rem;">${r.peminjam}</h4>
+                            <p style="font-size: 1.2rem; color: #333; margin-top: 10px;">Telah mengembalikan buku:</p>
+                            <div style="background: #eaf4f4; padding: 15px; border-radius: 15px; border: 2px solid #cce3e3; margin: 15px 0;">
+                                <h5 style="color: #006466; font-weight: bold; margin:0; font-size: 1.4rem;">${r.judul}</h5>
+                            </div>
+                            <div style="margin-top: 15px; display: flex; justify-content: center; gap: 20px;">
+                                <div style="background: #f8f9fa; border: 1px solid #dee2e6; padding: 10px 15px; border-radius: 10px;">
+                                    <span style="font-size: 1rem; color: #6c757d; display: block;">Terlambat</span>
+                                    <span style="font-size: 1.2rem; font-weight: bold; color: #495057;">${r.terlambat}</span>
+                                </div>
+                                <div style="background: #fff0f3; border: 1px solid #ffb3c1; padding: 10px 15px; border-radius: 10px;">
+                                    <span style="font-size: 1rem; color: #6c757d; display: block;">Denda</span>
+                                    <span style="font-size: 1.3rem; font-weight: bold; color: #d00000;">${r.denda}</span>
+                                </div>
+                            </div>
+                        </div>`,
+                        icon: 'success',
+                        width: '600px',
+                        padding: '2em',
+                        background: '#ffffff',
+                        backdrop: `rgba(0,123,0,0.4)`
+                    });
                 }
             } else { Swal.fire('Periksa Kembali', r.message, 'error'); }
         })[func](m, b, currentUser);
@@ -2849,6 +2919,7 @@ let publicCatalogAllBooks = null;
 let publicCatalogCurrentPage = 1;
 let publicCatalogCurrentAlpha = '';
 let isPublicCatalogLoading = false;
+window.publicCatalogVisible = false;
 
 function escapeCatalogHtml(text) {
     if (!text && text !== 0) return '';
@@ -2979,6 +3050,18 @@ function renderPublicCatalogPage(page = 1) {
     const searchByElem = document.getElementById('publicCatalogSearchBy');
     const search = searchInput ? searchInput.value.trim().toLowerCase() : '';
     const searchBy = searchByElem ? searchByElem.value : 'judul';
+
+    if (!window.publicCatalogVisible && publicCatalogCurrentAlpha === '' && search === '') {
+        tbody.innerHTML = `<tr><td colspan="5" class="text-center py-5">
+            <h5 class="text-muted fw-bold mb-3" style="font-size: 1.1rem;"><i class="fas fa-book-open me-2 text-primary"></i>Katalog Buku</h5>
+            <p class="text-muted small mb-4">Silakan cari berdasarkan judul/pengarang atau klik tombol di bawah untuk menampilkan seluruh koleksi buku.</p>
+            <button class="btn btn-primary rounded-pill px-4 py-2 fw-bold shadow-sm hover-scale" onclick="window.publicCatalogVisible = true; renderPublicCatalogPage(1);">
+                <i class="fas fa-list me-2"></i>Tampilkan Katalog Lengkap
+            </button>
+        </td></tr>`;
+        if (pagination) pagination.innerHTML = '';
+        return;
+    }
 
     if (search !== '') {
         if (searchBy === 'judul') {
