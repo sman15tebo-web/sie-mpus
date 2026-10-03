@@ -525,11 +525,15 @@ function apiHelper() {
                     const configData = responseData.data && typeof responseData.data === 'object' && !Array.isArray(responseData.data)
                         ? responseData.data
                         : { ...responseData };
+                    const serverConfig = { ...configData };
                     try {
                         const localCfgStr = localStorage.getItem('offline_app_config');
                         if (localCfgStr) {
                             const parsed = JSON.parse(localCfgStr);
                             Object.assign(configData, parsed);
+                            ['UrlLogo', 'UrlLogoInstansi', 'UrlBackground'].forEach(key => {
+                                if (/^data:image\//i.test(String(serverConfig[key] || ''))) configData[key] = serverConfig[key];
+                            });
                         }
                     } catch (e) { }
 
