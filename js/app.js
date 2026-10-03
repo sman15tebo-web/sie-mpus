@@ -697,6 +697,20 @@ function toggleAdminPassword() {
     }
 }
 
+function toggleAccountPassword() {
+    const passInput = document.getElementById('offlinePassDisplay');
+    const icon = document.getElementById('accountPasswordEye');
+    const button = document.getElementById('toggleAccountPassword');
+    if (!passInput || !icon || !button) return;
+
+    const showPassword = passInput.type === 'password';
+    passInput.type = showPassword ? 'text' : 'password';
+    icon.classList.toggle('fa-eye', !showPassword);
+    icon.classList.toggle('fa-eye-slash', showPassword);
+    button.setAttribute('aria-label', showPassword ? 'Sembunyikan password' : 'Tampilkan password');
+    button.setAttribute('aria-pressed', String(showPassword));
+}
+
 function attemptLogin() {
     const u = (document.getElementById('uName').value || '').trim();
     const p = (document.getElementById('uPass').value || '').trim();
@@ -1877,13 +1891,20 @@ function loadSettingsForm() {
                 // Populate account fields and configure UI based on mode
                 if (document.getElementById('offlineUserDisplay')) {
                     const hashHint = document.getElementById('passwordHashHint');
-                    if (hashHint) hashHint.style.display = window.isElectron ? 'none' : 'block';
+                    const execLinkCard = document.getElementById('execLinkCard');
+                    const passwordLabel = document.getElementById('passwordLabel');
+                    if (hashHint) {
+                        hashHint.textContent = 'Masukkan password baru. Server memberi salt dan mengubahnya menjadi SHA-256 sebelum disimpan.';
+                        hashHint.style.display = window.isElectron ? 'none' : 'block';
+                    }
+                    if (execLinkCard) execLinkCard.style.display = window.isElectron ? 'block' : 'none';
+                    if (passwordLabel) passwordLabel.textContent = window.isElectron ? 'Password Offline (Read Only)' : 'Password Baru';
                     if (window.isElectron) {
                         document.getElementById('offlineUserDisplay').value = (window.electronAPI ? window.electronAPI.getConfig().OFFLINE_ADMIN_USER : 'admin');
                         if (document.getElementById('offlinePassDisplay')) {
                             document.getElementById('offlinePassDisplay').value = (window.electronAPI ? window.electronAPI.getConfig().OFFLINE_ADMIN_PASS : 'admin123');
                             document.getElementById('offlinePassDisplay').readOnly = true;
-                            document.getElementById('offlinePassDisplay').type = 'text';
+                            document.getElementById('offlinePassDisplay').type = 'password';
                         }
                         if (document.getElementById('btnUpdateAccountContainer')) document.getElementById('btnUpdateAccountContainer').style.display = 'none';
                         if (document.getElementById('adminAccountBadge')) document.getElementById('adminAccountBadge').innerHTML = '<i class="fas fa-lock me-1"></i>Offline Mode';
@@ -1899,6 +1920,16 @@ function loadSettingsForm() {
                         if (document.getElementById('adminAccountBadge')) document.getElementById('adminAccountBadge').innerHTML = '<i class="fas fa-globe me-1"></i>Online Mode';
                         if (document.getElementById('offlineAccountWarning')) document.getElementById('offlineAccountWarning').style.display = 'none';
                         if (document.getElementById('offlineExecLinkDisplay')) document.getElementById('offlineExecLinkDisplay').value = window.location.href;
+                    }
+                    const passwordEye = document.getElementById('accountPasswordEye');
+                    const passwordEyeButton = document.getElementById('toggleAccountPassword');
+                    if (passwordEye) {
+                        passwordEye.classList.remove('fa-eye-slash');
+                        passwordEye.classList.add('fa-eye');
+                    }
+                    if (passwordEyeButton) {
+                        passwordEyeButton.setAttribute('aria-label', 'Tampilkan password');
+                        passwordEyeButton.setAttribute('aria-pressed', 'false');
                     }
                 }
             } catch (e) {
