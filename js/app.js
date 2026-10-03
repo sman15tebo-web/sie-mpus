@@ -282,6 +282,9 @@ document.getElementById('btnApplyCrop').addEventListener('click', function () {
 
 // --- INIT APP (SUPER AMAN ANTI-LOGOUT SAAT RELOAD) ---
 document.addEventListener("DOMContentLoaded", function () {
+    const syncButton = document.getElementById('btn-manual-sync');
+    if (syncButton) syncButton.hidden = !window.isElectron;
+
     const savedUser = localStorage.getItem('siempus_user');
     const savedUname = localStorage.getItem('siempus_username');
     const savedPage = localStorage.getItem('siempus_page');
