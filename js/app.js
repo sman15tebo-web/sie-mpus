@@ -217,7 +217,7 @@ document.getElementById('btnApplyCrop').addEventListener('click', function () {
     if (!cropperInstance) return;
     const MAX_LOGO_BASE64_LEN = 49000;
     if (currentCropTarget === 'logo' || currentCropTarget === 'logoInstansi') {
-        const size = 200;
+        const size = 250;
         const canvas = cropperInstance.getCroppedCanvas({
             width: size,
             height: size,
@@ -231,13 +231,20 @@ document.getElementById('btnApplyCrop').addEventListener('click', function () {
         let resultBase64 = canvas.toDataURL('image/png');
 
         if (resultBase64.length > MAX_LOGO_BASE64_LEN) {
-            for (const quality of [0.92, 0.88, 0.84, 0.8, 0.76, 0.72, 0.68, 0.64]) {
-                resultBase64 = canvas.toDataURL('image/jpeg', quality);
+            const jpegCanvas = document.createElement('canvas');
+            jpegCanvas.width = size;
+            jpegCanvas.height = size;
+            const context = jpegCanvas.getContext('2d');
+            context.fillStyle = '#ffffff';
+            context.fillRect(0, 0, size, size);
+            context.drawImage(canvas, 0, 0, size, size);
+            for (const quality of [0.94, 0.9, 0.86, 0.82, 0.78, 0.74, 0.7, 0.66, 0.62, 0.58]) {
+                resultBase64 = jpegCanvas.toDataURL('image/jpeg', quality);
                 if (resultBase64.length <= MAX_LOGO_BASE64_LEN) break;
             }
         }
         if (resultBase64.length > MAX_LOGO_BASE64_LEN) {
-            Swal.fire('Ukuran Logo Terlalu Besar', 'Logo tetap 200×200 px agar tidak pecah, tetapi ukuran datanya melebihi 50 KB. Pilih gambar logo yang lebih sederhana.', 'warning');
+            Swal.fire('Ukuran Logo Terlalu Besar', 'Logo tetap 250×250 px agar jelas, tetapi ukuran Base64-nya melebihi 49 KB. Coba gambar logo yang lebih sederhana atau tanpa latar foto.', 'warning');
             return;
         }
 
@@ -413,7 +420,10 @@ function loadAppConfig() {
     google.script.run
         .withFailureHandler(err => console.log("Gagal memuat config:", err))
         .withSuccessHandler(rawCfg => {
-            let cfg = (rawCfg && rawCfg.data && typeof rawCfg.data === 'object' && !Array.isArray(rawCfg.data)) ? rawCfg.data : (rawCfg || {});
+            const serverCfg = (rawCfg && rawCfg.data && typeof rawCfg.data === 'object' && !Array.isArray(rawCfg.data))
+                ? rawCfg.data
+                : (rawCfg || {});
+            let cfg = { ...serverCfg };
 
             // Cek snapshot local offline jika ada field yang belum terbawa
             // PENTING: localSavedCfg (pengaturan yang baru disimpan user) harus MENANG atas cfg (cache lama server)
@@ -422,6 +432,9 @@ function loadAppConfig() {
                 if (localSavedCfgStr) {
                     const localSavedCfg = JSON.parse(localSavedCfgStr);
                     cfg = Object.assign({}, cfg, localSavedCfg); // localSavedCfg di belakang = prioritas lebih tinggi
+                    ['UrlLogo', 'UrlLogoInstansi', 'UrlBackground'].forEach(key => {
+                        if (String(serverCfg[key] || '').startsWith('data:image/')) cfg[key] = serverCfg[key];
+                    });
                 }
             } catch (e) {}
 
@@ -441,9 +454,9 @@ function loadAppConfig() {
                 return url;
             }
 
-            const logoSrc = fixDriveLink(localLogo || cfg.UrlLogo || cfg.LogoBase64);
-            const bgSrc = fixDriveLink(localBg || cfg.UrlBackground || cfg.BackgroundBase64);
-            const logoInstansiSrc = fixDriveLink(localLogoInstansi || cfg.UrlLogoInstansi);
+            const logoSrc = fixDriveLink(cfg.UrlLogo || cfg.LogoBase64 || localLogo);
+            const bgSrc = fixDriveLink(cfg.UrlBackground || cfg.BackgroundBase64 || localBg);
+            const logoInstansiSrc = fixDriveLink(cfg.UrlLogoInstansi || localLogoInstansi);
 
             const fallback = 'https://cdn-icons-png.flaticon.com/512/2232/2232688.png';
             if (logoSrc) {
@@ -1834,7 +1847,9 @@ function loadSettingsForm() {
                         if (pBg) { pBg.src = cfg.UrlBackground; pBg.style.display = 'block'; }
                     }
                     const localBg = localStorage.getItem('offline_bg_base64') || localStorage.getItem('offline_bg_url');
-                    const bgDisplay = localBg || cfg.UrlBackground || '';
+                    const bgDisplay = /^data:image\//i.test(String(cfg.UrlBackground || ''))
+                        ? cfg.UrlBackground
+                        : (localBg || cfg.UrlBackground || '');
                     if (document.getElementById('cfgBg')) document.getElementById('cfgBg').value = bgDisplay;
                     if (bgDisplay && bgDisplay.length > 5) {
                         const pBg = document.getElementById('previewBg');
@@ -1898,15 +1913,19 @@ function saveSettings() {
     const logoInstansiVal = typeof uploadLogoInstansiBase64 !== 'undefined' ? uploadLogoInstansiBase64 : null;
     const logoVal = typeof uploadLogoBase64 !== 'undefined' ? uploadLogoBase64 : null;
     const bgVal = typeof uploadBgBase64 !== 'undefined' ? uploadBgBase64 : null;
+    const existingLogo = document.getElementById('cfgLogo')?.value || '';
+    const existingLogoInstansi = document.getElementById('cfgLogoInstansi')?.value || '';
+    const existingBackground = document.getElementById('cfgBg')?.value || '';
+    const isBase64Image = value => /^data:image\/(?:png|jpeg|webp);base64,/i.test(value);
 
     // 2. Tarik data dari form dengan aman
     const data = {
         namaSekolah: document.getElementById('cfgNama')?.value || '',
         namaInstansi: document.getElementById('cfgInstansi')?.value || '',
         alamatSekolah: document.getElementById('cfgAlamat')?.value || '',
-        urlLogo: document.getElementById('cfgLogo')?.value || '',
-        urlLogoInstansi: document.getElementById('cfgLogoInstansi')?.value || '',
-        urlBg: document.getElementById('cfgBg')?.value || '',
+        urlLogo: isBase64Image(existingLogo) ? '' : existingLogo,
+        urlLogoInstansi: isBase64Image(existingLogoInstansi) ? '' : existingLogoInstansi,
+        urlBg: isBase64Image(existingBackground) ? '' : existingBackground,
         uploadLogo: logoVal,
         uploadLogoInstansi: logoInstansiVal,
         uploadBg: bgVal,
@@ -1930,7 +1949,7 @@ function saveSettings() {
     };
 
     let desc = 'Sedang memperbarui aturan dan identitas...';
-    if (bgVal || logoVal || logoInstansiVal) desc = 'Sedang mengunggah file foto ke Google Drive...';
+    if (bgVal || logoVal || logoInstansiVal) desc = 'Menyimpan gambar Base64 ke spreadsheet...';
 
     showSmartLoading('Menyimpan Pengaturan...', desc);
 
@@ -1942,20 +1961,18 @@ function saveSettings() {
         .withSuccessHandler(res => {
             if (typeof swalCountdownInterval !== 'undefined') clearInterval(swalCountdownInterval);
             if (res.status) {
-                // Simpan Base64 & URL ke LocalStorage agar aman saat offline
+                // Cache konfigurasi kecil di localStorage; gambar besar disimpan terpisah di SQLite/browser cache.
                 if (logoVal) localStorage.setItem('offline_logo_base64', logoVal);
                 if (logoInstansiVal) localStorage.setItem('offline_logoinstansi_base64', logoInstansiVal);
-                if (bgVal) localStorage.setItem('offline_bg_base64', bgVal);
-                if (data.urlBg) localStorage.setItem('offline_bg_url', data.urlBg);
                 
                 // Simpan snapshot pengaturan offline lengkap
                 const currentSavedCfg = {
                     NamaSekolah: data.namaSekolah,
                     NamaInstansi: data.namaInstansi,
                     AlamatSekolah: data.alamatSekolah,
-                    UrlLogo: data.urlLogo,
-                    UrlLogoInstansi: data.urlLogoInstansi,
-                    UrlBackground: data.urlBg || bgVal,
+                    UrlLogo: logoVal || data.urlLogo || existingLogo,
+                    UrlLogoInstansi: logoInstansiVal || data.urlLogoInstansi || existingLogoInstansi,
+                    UrlBackground: bgVal || data.urlBg || existingBackground,
                     RunningText: data.runningText,
                     UrlWindows: data.urlWin,
                     UrlAndroid: data.urlAnd,
@@ -1974,7 +1991,11 @@ function saveSettings() {
                     MedsosTiktok: data.medsosTiktok,
                     MedsosTwitter: data.medsosTwitter
                 };
-                localStorage.setItem('offline_app_config', JSON.stringify(currentSavedCfg));
+                const localStorageConfig = { ...currentSavedCfg };
+                delete localStorageConfig.UrlLogo;
+                delete localStorageConfig.UrlLogoInstansi;
+                delete localStorageConfig.UrlBackground;
+                localStorage.setItem('offline_app_config', JSON.stringify(localStorageConfig));
 
                 // Mode Electron: simpan juga ke SQLite agar persisten antar restart
                 // Key harus sama dengan yang dibuat apiHelper saat getAppConfig dipanggil
