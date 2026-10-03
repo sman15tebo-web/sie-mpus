@@ -706,7 +706,7 @@
                             <i class="fas fa-wifi"></i> Online
                         </div>
                         <button class="btn btn-warning text-dark me-3 border shadow-sm rounded-pill"
-                            onclick="manualSync()" id="btn-manual-sync" title="Sinkronisasi Data ke Server">
+                            onclick="manualSync()" id="btn-manual-sync" title="Sinkronisasi Data ke Server" hidden>
                             <i class="fas fa-cloud-upload-alt"></i> <span class="d-none d-md-inline fw-bold">Sync</span>
                             <span id="sync-badge" class="badge bg-danger rounded-pill">0</span>
                         </button>
@@ -1098,7 +1098,8 @@
                                                     class="fas fa-lock me-1"></i>Terlindungi</span>
                                         </div>
                                         <div id="offlineAccountWarning"
-                                            class="alert alert-secondary small py-2 mb-2 d-flex align-items-center gap-2">
+                                            class="alert alert-secondary small py-2 mb-2 d-flex align-items-center gap-2"
+                                            style="display: none;">
                                             <i class="fas fa-info-circle fs-5 text-secondary"></i>
                                             <span>Demi keamanan, password akun <strong>Mode Offline</strong> tidak dapat
                                                 diubah melalui aplikasi.</span>
