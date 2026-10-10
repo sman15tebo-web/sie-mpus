@@ -724,48 +724,50 @@ function attemptLogin() {
 
     // --- CEK OFFLINE LOGIN (DESKTOP) ---
     if (window.isElectron) {
-        setTimeout(() => {
+        (async () => {
             try {
                 let offUser = '';
                 let offPass = '';
 
-                // Ambil kredensial MURNI secara dinamis dari config-offline.js
+                // 1. Coba baca dari electronAPI.getConfig()
+                let c = null;
                 if (window.electronAPI && typeof window.electronAPI.getConfig === 'function') {
-                    const c = window.electronAPI.getConfig();
-                    if (c) {
-                        if (c.OFFLINE_ADMIN_USER) offUser = c.OFFLINE_ADMIN_USER;
-                        else if (c.admin && c.admin.username) offUser = c.admin.username;
-
-                        if (c.OFFLINE_ADMIN_PASS) offPass = c.OFFLINE_ADMIN_PASS;
-                        else if (c.admin && c.admin.password) offPass = c.admin.password;
-                    }
+                    try { c = window.electronAPI.getConfig(); } catch (_) {}
                 }
-                if (!offUser && window.APP_CONFIG) {
-                    if (window.APP_CONFIG.LOGIN_USERNAME) offUser = window.APP_CONFIG.LOGIN_USERNAME;
-                    else if (window.APP_CONFIG.admin && window.APP_CONFIG.admin.username) offUser = window.APP_CONFIG.admin.username;
-
-                    if (window.APP_CONFIG.LOGIN_PASSWORD) offPass = window.APP_CONFIG.LOGIN_PASSWORD;
-                    else if (window.APP_CONFIG.admin && window.APP_CONFIG.admin.password) offPass = window.APP_CONFIG.admin.password;
+                // 2. Coba baca dari window.APP_CONFIG
+                if ((!c || (!c.admin && !c.OFFLINE_ADMIN_USER)) && window.APP_CONFIG) {
+                    c = window.APP_CONFIG;
+                }
+                // 3. Jika masih kosong, panggil IPC getOfflineConfig() ke Main Process
+                if ((!c || (!c.admin && !c.OFFLINE_ADMIN_USER)) && window.electronAPI && typeof window.electronAPI.getOfflineConfig === 'function') {
+                    try { c = await window.electronAPI.getOfflineConfig(); } catch (_) {}
                 }
 
-                // Default fallback jika di config-offline.js belum diisi
-                if (!offUser) offUser = 'admin';
-                if (!offPass) offPass = '123';
+                if (c) {
+                    if (c.admin && c.admin.username) offUser = c.admin.username;
+                    else if (c.OFFLINE_ADMIN_USER) offUser = c.OFFLINE_ADMIN_USER;
+                    else if (c.username) offUser = c.username;
 
-                const uLower = u.toLowerCase();
-                const offUserLower = offUser.toLowerCase();
+                    if (c.admin && c.admin.password) offPass = c.admin.password;
+                    else if (c.OFFLINE_ADMIN_PASS) offPass = c.OFFLINE_ADMIN_PASS;
+                    else if (c.password) offPass = c.password;
+                }
 
-                // Verifikasi MURNI dengan username/password yang tertulis di config-offline.js
-                const isMatch = (uLower === offUserLower && p === offPass) ||
-                                (uLower === 'admin' && (p === offPass || p === '123' || p === 'admin123'));
+                const uTrim = u.trim();
+                const pTrim = p.trim();
+
+                // Verifikasi MURNI: Cocokkan HANYA dengan username & password dari config-offline.js
+                const isUserMatch = offUser && (uTrim.toLowerCase() === offUser.toLowerCase());
+                const isPassMatch = offPass && (pTrim === offPass);
+                const isMatch = isUserMatch && isPassMatch;
 
                 if (isMatch) {
-                    prosesSuksesLogin({ status: true, nama: 'Admin', username: u });
+                    prosesSuksesLogin({ status: true, nama: 'Admin', username: uTrim });
                 } else {
                     btn.innerHTML = 'Login Sistem'; btn.disabled = false;
                     Swal.fire({
                         title: 'Gagal (Mode Offline)',
-                        html: `Username atau Password salah.<br><small class="text-muted mt-2 d-block">Kredensial offline terdaftar di <b>config-offline.js</b>:<br>Username: <b>${offUser}</b></small>`,
+                        html: `Username atau Password salah.<br><small class="text-muted mt-2 d-block">Kredensial offline terdaftar di <b>config-offline.js</b>:<br>Username: <b>${offUser || '(Belum diatur)'}</b></small>`,
                         icon: 'error'
                     });
                 }
@@ -774,7 +776,7 @@ function attemptLogin() {
                 btn.innerHTML = 'Login Sistem'; btn.disabled = false;
                 Swal.fire('Error Login', 'Terjadi kesalahan sistem login offline: ' + (err.message || err), 'error');
             }
-        }, 300);
+        })();
         return; // WAJIB return agar tidak memicu fetch / google.script.run
     }
     // -------------------------
@@ -1931,9 +1933,12 @@ function loadSettingsForm() {
                     if (execLinkCard) execLinkCard.style.display = window.isElectron ? 'block' : 'none';
                     if (passwordLabel) passwordLabel.textContent = window.isElectron ? 'Password Offline (Read Only)' : 'Password Baru';
                     if (window.isElectron) {
-                        document.getElementById('offlineUserDisplay').value = (window.electronAPI ? window.electronAPI.getConfig().OFFLINE_ADMIN_USER : 'admin');
+                        let cfg = window.electronAPI ? window.electronAPI.getConfig() : window.APP_CONFIG;
+                        let offUserDisplay = cfg ? (cfg.admin?.username || cfg.OFFLINE_ADMIN_USER || '') : '';
+                        let offPassDisplay = cfg ? (cfg.admin?.password || cfg.OFFLINE_ADMIN_PASS || '') : '';
+                        if (document.getElementById('offlineUserDisplay')) document.getElementById('offlineUserDisplay').value = offUserDisplay;
                         if (document.getElementById('offlinePassDisplay')) {
-                            document.getElementById('offlinePassDisplay').value = (window.electronAPI ? window.electronAPI.getConfig().OFFLINE_ADMIN_PASS : 'admin123');
+                            document.getElementById('offlinePassDisplay').value = offPassDisplay;
                             document.getElementById('offlinePassDisplay').readOnly = true;
                             document.getElementById('offlinePassDisplay').type = 'password';
                         }
