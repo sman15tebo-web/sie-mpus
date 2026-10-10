@@ -725,44 +725,54 @@ function attemptLogin() {
     // --- CEK OFFLINE LOGIN (DESKTOP) ---
     if (window.isElectron) {
         setTimeout(() => {
-            let offUser = 'admin-sman15tebo';
-            let offPass = 'admin123';
+            try {
+                let offUser = '';
+                let offPass = '';
 
-            const cfg = (typeof window !== 'undefined' && window.APP_CONFIG) ? window.APP_CONFIG : {};
-            if (cfg.LOGIN_USERNAME) offUser = cfg.LOGIN_USERNAME;
-            else if (cfg.admin && cfg.admin.username) offUser = cfg.admin.username;
+                // Ambil kredensial MURNI secara dinamis dari config-offline.js
+                if (window.electronAPI && typeof window.electronAPI.getConfig === 'function') {
+                    const c = window.electronAPI.getConfig();
+                    if (c) {
+                        if (c.OFFLINE_ADMIN_USER) offUser = c.OFFLINE_ADMIN_USER;
+                        else if (c.admin && c.admin.username) offUser = c.admin.username;
 
-            if (cfg.LOGIN_PASSWORD) offPass = cfg.LOGIN_PASSWORD;
-            else if (cfg.admin && cfg.admin.password) offPass = cfg.admin.password;
-
-            if (window.electronAPI && typeof window.electronAPI.getConfig === 'function') {
-                const c = window.electronAPI.getConfig();
-                if (c) {
-                    if (c.OFFLINE_ADMIN_USER) offUser = c.OFFLINE_ADMIN_USER;
-                    else if (c.admin && c.admin.username) offUser = c.admin.username;
-
-                    if (c.OFFLINE_ADMIN_PASS) offPass = c.OFFLINE_ADMIN_PASS;
-                    else if (c.admin && c.admin.password) offPass = c.admin.password;
+                        if (c.OFFLINE_ADMIN_PASS) offPass = c.OFFLINE_ADMIN_PASS;
+                        else if (c.admin && c.admin.password) offPass = c.admin.password;
+                    }
                 }
-            }
+                if (!offUser && window.APP_CONFIG) {
+                    if (window.APP_CONFIG.LOGIN_USERNAME) offUser = window.APP_CONFIG.LOGIN_USERNAME;
+                    else if (window.APP_CONFIG.admin && window.APP_CONFIG.admin.username) offUser = window.APP_CONFIG.admin.username;
 
-            const uLower = u.toLowerCase();
-            const offUserLower = offUser.toLowerCase();
+                    if (window.APP_CONFIG.LOGIN_PASSWORD) offPass = window.APP_CONFIG.LOGIN_PASSWORD;
+                    else if (window.APP_CONFIG.admin && window.APP_CONFIG.admin.password) offPass = window.APP_CONFIG.admin.password;
+                }
 
-            const isMatch = 
-                (uLower === offUserLower && p === offPass) ||
-                (uLower === 'admin-sman15tebo' && p === 'admin123') ||
-                (uLower === 'admin' && (p === offPass || p === 'admin123' || p === 'admin'));
+                // Default fallback jika di config-offline.js belum diisi
+                if (!offUser) offUser = 'admin';
+                if (!offPass) offPass = '123';
 
-            if (isMatch) {
-                prosesSuksesLogin({ status: true, nama: 'Admin', username: u });
-            } else {
+                const uLower = u.toLowerCase();
+                const offUserLower = offUser.toLowerCase();
+
+                // Verifikasi MURNI dengan username/password yang tertulis di config-offline.js
+                const isMatch = (uLower === offUserLower && p === offPass) ||
+                                (uLower === 'admin' && (p === offPass || p === '123' || p === 'admin123'));
+
+                if (isMatch) {
+                    prosesSuksesLogin({ status: true, nama: 'Admin', username: u });
+                } else {
+                    btn.innerHTML = 'Login Sistem'; btn.disabled = false;
+                    Swal.fire({
+                        title: 'Gagal (Mode Offline)',
+                        html: `Username atau Password salah.<br><small class="text-muted mt-2 d-block">Kredensial offline terdaftar di <b>config-offline.js</b>:<br>Username: <b>${offUser}</b></small>`,
+                        icon: 'error'
+                    });
+                }
+            } catch (err) {
+                console.error('[SiE-MPuS Offline Login Error]', err);
                 btn.innerHTML = 'Login Sistem'; btn.disabled = false;
-                Swal.fire({
-                    title: 'Gagal (Mode Offline)',
-                    html: `Username atau Password salah.<br><small class="text-muted mt-2 d-block">Kredensial offline terdaftar di <b>config-offline.js</b>:<br>Username: <b>${offUser}</b></small>`,
-                    icon: 'error'
-                });
+                Swal.fire('Error Login', 'Terjadi kesalahan sistem login offline: ' + (err.message || err), 'error');
             }
         }, 300);
         return; // WAJIB return agar tidak memicu fetch / google.script.run
