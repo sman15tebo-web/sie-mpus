@@ -20,52 +20,74 @@ function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
    ADAPTOR MULTI-TENANT (1 FRONTEND, BANYAK BACKEND)
 ======================================================== */
 
-// 1. Buat "Buku Telepon" yang berisi daftar sekolah dan link Backend-nya masing-masing
+// 1. Daftar Sekolah & Link Backend
 const daftarSekolah = {
     "sman15tebo": "https://script.google.com/macros/s/AKfycbwbELFRwvURcfwTWMrrs3PxUIbdGI8f-dP3oDvFIVOm3ZJf3d1Lt_M1cY3XZlhUNrYJ/exec",
-    "demo": "https://script.google.com/"
+    "demo": "https://script.google.com/macros/s/AKfycbwbELFRwvURcfwTWMrrs3PxUIbdGI8f-dP3oDvFIVOm3ZJf3d1Lt_M1cY3XZlhUNrYJ/exec"
 };
 
-// 2. Baca parameter ?id= dari URL browser (untuk mode Web)
-let tenantId = "demo";
-if (!window.isElectron) {
-    const urlParams = new URLSearchParams(window.location.search);
-    tenantId = urlParams.get('id');
+let API_URL = "";
+let tenantId = "";
 
-    // Jika pengguna tidak mengetik ?id= di URL, coba ingat ID terakhir dari memori browser
-    if (!tenantId) {
-        tenantId = localStorage.getItem('siempus_tenant_id') || "demo";
-    }
-
-    // Keamanan: Jika pengguna ganti URL sekolah (pindah sekolah), logout otomatis akun sebelumnya
-    const savedTenant = localStorage.getItem('siempus_tenant_id');
-    if (savedTenant && savedTenant !== tenantId) {
-        localStorage.removeItem('siempus_user');
-        localStorage.removeItem('siempus_username');
-        localStorage.removeItem('siempus_page');
-    }
-
-    localStorage.setItem('siempus_tenant_id', tenantId);
-
-    // Rapikan URL di browser agar selalu terlihat ?id=namasekolah
-    if (!window.location.search.includes('id=') && window.location.protocol !== 'file:') {
-        window.history.replaceState(null, null, "?id=" + tenantId);
-    }
-} else {
-    // Mode Desktop: Baca dari config offline
+if (window.isElectron) {
     tenantId = "desktop";
     localStorage.setItem('siempus_tenant_id', 'desktop');
-}
-
-// 3. Tentukan API URL berdasarkan mode & ID
-let API_URL = "";
-if (window.isElectron && window.electronAPI && typeof window.electronAPI.getConfig === 'function') {
-    const dConfig = window.electronAPI.getConfig();
-    if (dConfig && dConfig.OFFLINE_EXEC_LINK) {
-        API_URL = dConfig.OFFLINE_EXEC_LINK;
+    if (window.electronAPI && typeof window.electronAPI.getConfig === 'function') {
+        const dConfig = window.electronAPI.getConfig();
+        if (dConfig && (dConfig.OFFLINE_EXEC_LINK || dConfig.gasUrl || dConfig.linkExec)) {
+            API_URL = dConfig.OFFLINE_EXEC_LINK || dConfig.gasUrl || dConfig.linkExec;
+        }
     }
-}
+} else {
+    // Mode Online Browser
+    const urlParams = new URLSearchParams(window.location.search);
 
-if (!API_URL) {
-    API_URL = daftarSekolah[tenantId] || daftarSekolah["demo"];
+    // Prioritas 1: Parameter langsung ?exec=...
+    const paramExec = urlParams.get('exec');
+    if (paramExec && paramExec.startsWith('http')) {
+        API_URL = paramExec;
+        localStorage.setItem('siempus_custom_api_url', paramExec);
+    }
+
+    // Prioritas 2: Link Exec Kustom dari Pengaturan Sekolah
+    if (!API_URL) {
+        const customUrl = localStorage.getItem('siempus_custom_api_url') || localStorage.getItem('customSyncLink');
+        if (customUrl && customUrl.startsWith('http')) {
+            API_URL = customUrl;
+        }
+    }
+
+    // Prioritas 3: Parameter ?id=...
+    const paramId = urlParams.get('id');
+    if (paramId) {
+        tenantId = paramId.trim().toLowerCase();
+        if (daftarSekolah[tenantId]) {
+            API_URL = daftarSekolah[tenantId];
+        }
+        localStorage.setItem('siempus_tenant_id', tenantId);
+    } else {
+        // Prioritas 4: Memori Tenant Terakhir / Nama Sekolah
+        tenantId = localStorage.getItem('siempus_tenant_id');
+        if (tenantId && daftarSekolah[tenantId]) {
+            API_URL = daftarSekolah[tenantId];
+        } else {
+            try {
+                const conf = JSON.parse(localStorage.getItem('siempus_pengaturan') || localStorage.getItem('appSettings') || '{}');
+                const sName = conf.nama_sekolah || conf.namasekolah || '';
+                if (sName) {
+                    const slug = sName.toLowerCase().replace(/[^a-z0-9]/g, '');
+                    if (daftarSekolah[slug]) {
+                        API_URL = daftarSekolah[slug];
+                        tenantId = slug;
+                        localStorage.setItem('siempus_tenant_id', slug);
+                    }
+                }
+            } catch (e) { }
+        }
+    }
+
+    // Prioritas 5: Fallback
+    if (!API_URL) {
+        API_URL = daftarSekolah[tenantId] || daftarSekolah["sman15tebo"] || Object.values(daftarSekolah)[0] || "";
+    }
 }
