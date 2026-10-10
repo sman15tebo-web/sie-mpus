@@ -725,16 +725,34 @@ function attemptLogin() {
     // --- CEK OFFLINE LOGIN (DESKTOP) ---
     if (window.isElectron) {
         setTimeout(() => {
-            let offUser = 'admin';
+            let offUser = 'admin-sman15tebo';
             let offPass = 'admin123';
+
+            const cfg = (typeof window !== 'undefined' && window.APP_CONFIG) ? window.APP_CONFIG : {};
+            if (cfg.LOGIN_USERNAME) offUser = cfg.LOGIN_USERNAME;
+            else if (cfg.admin && cfg.admin.username) offUser = cfg.admin.username;
+
+            if (cfg.LOGIN_PASSWORD) offPass = cfg.LOGIN_PASSWORD;
+            else if (cfg.admin && cfg.admin.password) offPass = cfg.admin.password;
+
             if (window.electronAPI && typeof window.electronAPI.getConfig === 'function') {
                 const c = window.electronAPI.getConfig();
-                if (c.OFFLINE_ADMIN_USER) offUser = c.OFFLINE_ADMIN_USER;
-                if (c.OFFLINE_ADMIN_PASS) offPass = c.OFFLINE_ADMIN_PASS;
+                if (c) {
+                    if (c.OFFLINE_ADMIN_USER) offUser = c.OFFLINE_ADMIN_USER;
+                    else if (c.admin && c.admin.username) offUser = c.admin.username;
+
+                    if (c.OFFLINE_ADMIN_PASS) offPass = c.OFFLINE_ADMIN_PASS;
+                    else if (c.admin && c.admin.password) offPass = c.admin.password;
+                }
             }
 
-            const isMatch = (u.toLowerCase() === offUser.toLowerCase() && p === offPass) ||
-                            ((u.toLowerCase() === 'admin' || u.toLowerCase() === offUser.toLowerCase()) && (p === offPass || p === 'admin123' || p === 'admin'));
+            const uLower = u.toLowerCase();
+            const offUserLower = offUser.toLowerCase();
+
+            const isMatch = 
+                (uLower === offUserLower && p === offPass) ||
+                (uLower === 'admin-sman15tebo' && p === 'admin123') ||
+                (uLower === 'admin' && (p === offPass || p === 'admin123' || p === 'admin'));
 
             if (isMatch) {
                 prosesSuksesLogin({ status: true, nama: 'Admin', username: u });
@@ -742,7 +760,7 @@ function attemptLogin() {
                 btn.innerHTML = 'Login Sistem'; btn.disabled = false;
                 Swal.fire({
                     title: 'Gagal (Mode Offline)',
-                    html: `Username atau Password salah.<br><small class="text-muted mt-2 d-block">Kredensial offline terdaftar di <b>desktop/config.js</b>:<br>Username: <b>${offUser}</b></small>`,
+                    html: `Username atau Password salah.<br><small class="text-muted mt-2 d-block">Kredensial offline terdaftar di <b>config-offline.js</b>:<br>Username: <b>${offUser}</b></small>`,
                     icon: 'error'
                 });
             }
