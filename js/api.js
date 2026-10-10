@@ -477,23 +477,35 @@ function apiHelper() {
 
             // Penanganan Khusus Login OFFLINE Desktop
             if (action === 'loginUser') {
-                let offUser = 'admin';
-                let offPass = 'admin123';
+                let offUser = '';
+                let offPass = '';
+                let c = null;
                 if (window.electronAPI && typeof window.electronAPI.getConfig === 'function') {
-                    const c = window.electronAPI.getConfig();
-                    if (c.OFFLINE_ADMIN_USER) offUser = c.OFFLINE_ADMIN_USER;
-                    if (c.OFFLINE_ADMIN_PASS) offPass = c.OFFLINE_ADMIN_PASS;
+                    try { c = window.electronAPI.getConfig(); } catch (_) {}
                 }
+                if ((!c || (!c.admin && !c.OFFLINE_ADMIN_USER)) && window.APP_CONFIG) {
+                    c = window.APP_CONFIG;
+                }
+
+                if (c) {
+                    if (c.admin && c.admin.username) offUser = c.admin.username;
+                    else if (c.OFFLINE_ADMIN_USER) offUser = c.OFFLINE_ADMIN_USER;
+                    else if (c.username) offUser = c.username;
+
+                    if (c.admin && c.admin.password) offPass = c.admin.password;
+                    else if (c.OFFLINE_ADMIN_PASS) offPass = c.OFFLINE_ADMIN_PASS;
+                    else if (c.password) offPass = c.password;
+                }
+
                 const inputU = (payload.username || '').trim();
                 const inputP = (payload.password || '').trim();
 
-                const match = (inputU.toLowerCase() === offUser.toLowerCase() && inputP === offPass) ||
-                    ((inputU.toLowerCase() === 'admin' || inputU.toLowerCase() === offUser.toLowerCase()) && (inputP === offPass || inputP === 'admin' || inputP === 'admin123'));
+                const match = offUser && offPass && (inputU.toLowerCase() === offUser.toLowerCase()) && (inputP === offPass);
 
                 if (match) {
                     if (successCb) successCb({ status: true, nama: 'Admin', username: inputU });
                 } else {
-                    if (successCb) successCb({ status: false, message: 'Username atau Password salah (Mode Offline). Kredensial aktif: ' + offUser });
+                    if (successCb) successCb({ status: false, message: 'Username atau Password salah (Mode Offline).' });
                 }
                 return; // Selesai offline
             }
