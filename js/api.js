@@ -126,7 +126,7 @@ function apiHelper() {
                 let hp = (colMap['hp'] !== undefined ? r[colMap['hp']] : r[5]);
 
                 id = (id !== undefined && id !== null) ? String(id).trim() : '';
-                nama = (nama !== undefined && nama !== null) ? String(nama).trim() : '';
+                nama = (nama !== undefined && nama !== null) ? String(nama).trim().toUpperCase() : '';
                 if (!id && !nama) continue;
                 if (id.toLowerCase().includes('id') && nama.toLowerCase().includes('nama')) continue;
 
@@ -452,6 +452,11 @@ function apiHelper() {
         };
 
         payload.action = action;
+
+        // Nama anggota selalu disimpan HURUF KAPITAL (input manual maupun edit)
+        if (action === 'saveMember' && payload.memberData && typeof payload.memberData.nama === 'string') {
+            payload.memberData.nama = payload.memberData.nama.trim().toUpperCase();
+        }
 
         const isReadAction = ['getAppConfig', 'getBookList', 'getMemberList', 'getDashboardStats', 'getHistoryList', 'getExportHistoryByDate', 'checkMember', 'getAllDataForExport', 'loginUser'].includes(action);
 
