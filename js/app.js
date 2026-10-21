@@ -7439,6 +7439,64 @@ function copyExecLink() {
     }
 }
 
+window.triggerOnlineSetupDatabase = async function() {
+    const confirm = await Swal.fire({
+        icon: 'question',
+        title: 'Setup & Perbaiki Kolom Database?',
+        text: 'Sistem akan memeriksa seluruh tabel di Google Spreadsheet dan secara otomatis menambahkan kolom-kolom baru jika ada yang kurang tanpa menghapus data yang sudah ada.',
+        showCancelButton: true,
+        confirmButtonText: 'Ya, Jalankan Setup',
+        cancelButtonText: 'Batal',
+        confirmButtonColor: '#4361ee'
+    });
+    if (!confirm.isConfirmed) return;
+
+    if (typeof showSmartLoading === 'function') {
+        showSmartLoading('Menyelaraskan Database...', 'Memeriksa dan memperbarui struktur kolom di Google Spreadsheet...');
+    }
+
+    try {
+        if (window.isElectron && window.electronAPI && typeof window.electronAPI.postToGas === 'function') {
+            const res = await window.electronAPI.postToGas({ action: 'setupDatabase' });
+            if (typeof hideSmartLoading === 'function') hideSmartLoading();
+            Swal.fire({
+                icon: 'success',
+                title: 'Database Terstruktur Rapi!',
+                text: res?.message || 'Seluruh tabel dan kolom di Google Spreadsheet telah diselaraskan secara otomatis.',
+                confirmButtonColor: '#4361ee'
+            });
+        } else {
+            google.script.run
+                .withSuccessHandler(res => {
+                    if (typeof hideSmartLoading === 'function') hideSmartLoading();
+                    const msg = (typeof res === 'object' ? res.message : res) || 'Seluruh tabel dan kolom di Google Spreadsheet telah diselaraskan secara otomatis.';
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Database Terstruktur Rapi!',
+                        text: msg,
+                        confirmButtonColor: '#4361ee'
+                    });
+                })
+                .withFailureHandler(err => {
+                    if (typeof hideSmartLoading === 'function') hideSmartLoading();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal Setup Database',
+                        text: err.message || err.toString()
+                    });
+                })
+                .setupDatabase();
+        }
+    } catch (err) {
+        if (typeof hideSmartLoading === 'function') hideSmartLoading();
+        Swal.fire({
+            icon: 'error',
+            title: 'Gagal Setup Database',
+            text: err.message || err.toString()
+        });
+    }
+};
+
 function updateLoginModeUI() {
     const indicator = document.getElementById('loginModeIndicator');
     if (!indicator) return;
