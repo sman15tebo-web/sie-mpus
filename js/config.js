@@ -84,9 +84,9 @@ function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
 
 // 1. Daftar Sekolah & Link Backend
 const daftarSekolah = {
-    "sman15tebo": "https://script.google.com/macros/s/AKfycbxOyyN015CDUNNhAGViyw0PePrcv3mSpPzqfJf7lxh2Gz24fKARq4IS8rahFGtDCORJ/exec",
+    "sman15tebo": "https://script.google.com/macros/s/AKfycbycM_rN9sHomryNl3O7_2OUEj0TIlXFiONnpUFjZ-BQYzkJlA_JrL4e_Wf7LOI3nnMc/exec",
     "sman5tebo": "",
-    "demo": "https://script.google.com/macros/s/AKfycbxOyyN015CDUNNhAGViyw0PePrcv3mSpPzqfJf7lxh2Gz24fKARq4IS8rahFGtDCORJ/exec"
+    "demo": "https://script.google.com/macros/s/AKfycbycM_rN9sHomryNl3O7_2OUEj0TIlXFiONnpUFjZ-BQYzkJlA_JrL4e_Wf7LOI3nnMc/exec"
 };
 
 let API_URL = "";
