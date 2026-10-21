@@ -1995,7 +1995,8 @@ function apiHelper() {
         getSopPdf: function (includeB64) { execute('getSopPdf', { includeBase64: includeB64 }); },
         deleteSopPdf: function () { execute('deleteSopPdf'); },
         saveDasarHukumList: function (list) { execute('saveDasarHukumList', { list: list }); },
-        getDasarHukumList: function () { execute('getDasarHukumList'); }
+        getDasarHukumList: function () { execute('getDasarHukumList'); },
+        setupDatabase: function () { execute('setupDatabase'); }
     };
 }
 
