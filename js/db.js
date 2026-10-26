@@ -723,6 +723,10 @@ async function manualSync() {
             return `${pulled.visitors} kunjungan`;
         });
 
+        loadAppConfig();
+        publicCatalogAllBooks = null;
+        loadPublicCatalog(1, true);
+
         progressUi.complete();
         updateSyncBadge();
 
