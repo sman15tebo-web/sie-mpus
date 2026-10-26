@@ -411,8 +411,8 @@ async function manualSync() {
 
         // 2. Susun tahapan sinkronisasi
         const stages = [];
-        const hasPendingSopUpload = localStorage.getItem('offline_sop_pdf_pending_sync') === 'true';
-        const hasPendingSopDelete = localStorage.getItem('offline_sop_pdf_pending_delete') === 'true';
+        const hasPendingSopUpload = localStorage.getItem('siempus_offline_sop_pdf_pending_sync') === 'true';
+        const hasPendingSopDelete = localStorage.getItem('siempus_offline_sop_pdf_pending_delete') === 'true';
         const hasPendingDasarHukum = localStorage.getItem('offline_dasar_hukum_pending_sync') === 'true';
         const extraPendingOut = (hasPendingSopUpload ? 1 : 0) + (hasPendingSopDelete ? 1 : 0) + (hasPendingDasarHukum ? 1 : 0);
         const totalOut = queue.length + extraPendingOut;
@@ -487,9 +487,9 @@ async function manualSync() {
                 processedOut++;
                 progressUi.progress('queue', processedOut / totalOut, `Mengunggah berkas SOP PDF ke Google Drive...`);
                 try {
-                    let fileDataUrl = localStorage.getItem('sop_pdf_data');
+                    let fileDataUrl = localStorage.getItem('siempus_sop_pdf_data');
                     let meta = null;
-                    try { meta = JSON.parse(localStorage.getItem('sop_pdf_meta') || 'null'); } catch(_) {}
+                    try { meta = JSON.parse(localStorage.getItem('siempus_sop_pdf_meta') || 'null'); } catch(_) {}
 
                     if (!fileDataUrl && window.isElectron && window.electronAPI && typeof window.electronAPI.getOfflineSopPdf === 'function') {
                         const offRes = await window.electronAPI.getOfflineSopPdf();
@@ -506,9 +506,9 @@ async function manualSync() {
                             filename: meta?.name || 'Dokumen_SOP_Perpustakaan.pdf'
                         });
                         if (sopUpRes && (sopUpRes.success || sopUpRes.status)) {
-                            localStorage.removeItem('offline_sop_pdf_pending_sync');
-                            if (sopUpRes.url) localStorage.setItem('sop_pdf_url', sopUpRes.url);
-                            if (sopUpRes.meta) localStorage.setItem('sop_pdf_meta', JSON.stringify(sopUpRes.meta));
+                            localStorage.removeItem('siempus_offline_sop_pdf_pending_sync');
+                            if (sopUpRes.url) localStorage.setItem('siempus_sop_pdf_url', sopUpRes.url);
+                            if (sopUpRes.meta) localStorage.setItem('siempus_sop_pdf_meta', JSON.stringify(sopUpRes.meta));
                             successCount++;
                         } else {
                             failCount++;
@@ -525,7 +525,7 @@ async function manualSync() {
                 try {
                     const sopDelRes = await postSyncRequest(urlTarget, { action: 'deleteSopPdf' });
                     if (sopDelRes && (sopDelRes.success || sopDelRes.status)) {
-                        localStorage.removeItem('offline_sop_pdf_pending_delete');
+                        localStorage.removeItem('siempus_offline_sop_pdf_pending_delete');
                         successCount++;
                     }
                 } catch (sopDelErr) {
@@ -638,10 +638,10 @@ async function manualSync() {
             try {
                 const sopRes = await getData({ action: 'getSopPdf', includeBase64: true });
                 if (sopRes && sopRes.hasCustom) {
-                    if (sopRes.url) localStorage.setItem('sop_pdf_url', sopRes.url);
-                    if (sopRes.meta) localStorage.setItem('sop_pdf_meta', JSON.stringify(sopRes.meta));
+                    if (sopRes.url) localStorage.setItem('siempus_sop_pdf_url', sopRes.url);
+                    if (sopRes.meta) localStorage.setItem('siempus_sop_pdf_meta', JSON.stringify(sopRes.meta));
                     if (sopRes.base64) {
-                        localStorage.setItem('sop_pdf_data', sopRes.base64);
+                        localStorage.setItem('siempus_sop_pdf_data', sopRes.base64);
                         if (window.isElectron && window.electronAPI && typeof window.electronAPI.saveOfflineSopPdf === 'function') {
                             await window.electronAPI.saveOfflineSopPdf({
                                 fileDataUrl: sopRes.base64,
@@ -651,10 +651,10 @@ async function manualSync() {
                     }
                     sopStatusNote = 'PDF Resmi Tersimpan';
                 } else if (sopRes && !sopRes.hasCustom) {
-                    if (localStorage.getItem('offline_sop_pdf_pending_sync') !== 'true') {
-                        localStorage.removeItem('sop_pdf_data');
-                        localStorage.removeItem('sop_pdf_meta');
-                        localStorage.removeItem('sop_pdf_url');
+                    if (localStorage.getItem('siempus_offline_sop_pdf_pending_sync') !== 'true') {
+                        localStorage.removeItem('siempus_sop_pdf_data');
+                        localStorage.removeItem('siempus_sop_pdf_meta');
+                        localStorage.removeItem('siempus_sop_pdf_url');
                         if (window.isElectron && window.electronAPI && typeof window.electronAPI.deleteOfflineSopPdf === 'function') {
                             await window.electronAPI.deleteOfflineSopPdf();
                         }
@@ -746,7 +746,7 @@ async function manualSync() {
                             <li>Guru & Tendik: <b>${pulled.teachers || 0}</b></li>
                             <li>Riwayat aktif: <b>${pulled.historyActive}</b> &middot; arsip: <b>${pulled.historyArchive}</b></li>
                             <li>Buku Kunjungan: <b>${pulled.visitors}</b></li>
-                            <li>Dokumen SOP: <b>${localStorage.getItem('sop_pdf_data') || localStorage.getItem('sop_pdf_url') ? 'Dokumen Resmi (Tersinkron)' : 'Template Standar'}</b></li>
+                            <li>Dokumen SOP: <b>${localStorage.getItem('siempus_sop_pdf_data') || localStorage.getItem('siempus_sop_pdf_url') ? 'Dokumen Resmi (Tersinkron)' : 'Template Standar'}</b></li>
                         </ul>
                     </div>`,
                 icon: 'success'
