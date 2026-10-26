@@ -421,7 +421,6 @@ async function manualSync() {
             stages.push({ key: 'queue', label: `Kirim ${totalOut} perubahan lokal ke server`, units: totalOut });
         }
         stages.push(
-            { key: 'snapshot', label: 'Tarik snapshot seluruh sheet', units: 1 },
             { key: 'config', label: 'Tarik pengaturan sistem', units: 1 },
             { key: 'sop', label: 'Tarik dokumen SOP & dasar hukum', units: 1 },
             { key: 'dashboard', label: 'Tarik statistik dashboard', units: 1 },
@@ -621,17 +620,6 @@ async function manualSync() {
             }
         };
 
-        await runPullStage('snapshot', 'Snapshot seluruh sheet', async () => {
-            const snapshotResponse = await getData({ action: 'getAllBackupData' });
-            if (!snapshotResponse.data || typeof snapshotResponse.data !== 'object') {
-                throw new Error('Snapshot spreadsheet tidak memiliki format yang benar.');
-            }
-            await saveToLocalDB('cache', {
-                key: 'serverSnapshot',
-                data: snapshotResponse.data
-            });
-        });
-
         await runPullStage('config', 'getAppConfig', async () => {
             const payload = { action: 'getAppConfig' };
             const data = await getData(payload);
@@ -746,7 +734,7 @@ async function manualSync() {
                 title: 'Sinkronisasi Berhasil',
                 html: `
                     <div class="text-start small">
-                        <div class="mb-2">Semua perubahan terkirim dan seluruh data server tersimpan di SQLite.</div>
+                        <div class="mb-2">Semua perubahan terkirim dan data penting perpustakaan tersimpan di SQLite.</div>
                         <ul class="mb-0">
                             <li>Perubahan terkirim: <b>${successCount}</b></li>
                             <li>Buku: <b>${pulled.books}</b></li>
