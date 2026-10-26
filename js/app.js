@@ -7641,6 +7641,12 @@ function openInputKunjunganModal() {
     // Reset Form
     const form = document.getElementById('formBukuTamu');
     if (form) form.reset();
+    const editId = document.getElementById('editVisitorId');
+    if (editId) editId.value = '';
+    const title = document.getElementById('modalBukuTamuLabel');
+    if (title) title.textContent = 'Tambah Catatan Kunjungan';
+    const submitButton = document.getElementById('btnSubmitBukuTamu');
+    if (submitButton) submitButton.innerHTML = '<i class="fas fa-save"></i> Simpan Catatan Kunjungan';
 
     const katSiswa = document.getElementById('katSiswa');
     if (katSiswa) katSiswa.checked = true;
@@ -7658,6 +7664,57 @@ function openInputKunjunganModal() {
 
     const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
     modal.show();
+}
+
+function editVisitorLog(id) {
+    const visitor = visitorData.find(row => String(row.id || '').trim() === String(id || '').trim());
+    if (!visitor) {
+        Swal.fire('Data tidak ditemukan', 'Muat ulang daftar kunjungan lalu coba edit kembali.', 'warning');
+        return;
+    }
+
+    const form = document.getElementById('formBukuTamu');
+    if (form) form.reset();
+    const categoryText = String(visitor.kategori || '').toLowerCase();
+    const category = categoryText.includes('siswa') ? 'Siswa'
+        : (categoryText.includes('guru') || categoryText.includes('tendik')) ? 'Guru'
+            : 'Tamu';
+    const categoryInput = document.getElementById(category === 'Siswa' ? 'katSiswa' : category === 'Guru' ? 'katGuru' : 'katTamu');
+    if (categoryInput) categoryInput.checked = true;
+    handleTamuCategoryChange(category);
+
+    const dateInput = document.getElementById('tamuTanggal');
+    const timeInput = document.getElementById('tamuJam');
+    const editId = document.getElementById('editVisitorId');
+    if (editId) editId.value = String(visitor.id || '').trim();
+    if (dateInput) dateInput.value = String(visitor.tanggal || visitor.tanggalWaktu || '').slice(0, 10);
+    if (timeInput) timeInput.value = String(visitor.jam || String(visitor.tanggalWaktu || '').slice(11, 19)).slice(0, 8);
+
+    const identitasInput = document.getElementById('tamuIdentitas');
+    const namaInput = document.getElementById('tamuNama');
+    const kelasInput = document.getElementById('tamuKelasInstansi');
+    const jkInput = document.getElementById('tamuJk');
+    const keperluanInput = document.getElementById('tamuKeperluan');
+    const keteranganInput = document.getElementById('tamuKeterangan');
+    if (identitasInput) identitasInput.value = visitor.identitas || '';
+    if (namaInput) namaInput.value = visitor.nama || '';
+    if (kelasInput) kelasInput.value = visitor.kelasInstansi || '';
+    if (jkInput) jkInput.value = visitor.jk || 'L';
+    if (keperluanInput) {
+        const value = visitor.keperluan || 'Membaca Buku / Belajar Mandiri';
+        if (![...keperluanInput.options].some(option => option.value === value)) {
+            keperluanInput.add(new Option(value, value));
+        }
+        keperluanInput.value = value;
+        handleTamuKeperluanChange(value);
+    }
+    if (keteranganInput) keteranganInput.value = visitor.keterangan === '-' ? '' : (visitor.keterangan || '');
+
+    const title = document.getElementById('modalBukuTamuLabel');
+    if (title) title.textContent = 'Edit Catatan Kunjungan';
+    const submitButton = document.getElementById('btnSubmitBukuTamu');
+    if (submitButton) submitButton.innerHTML = '<i class="fas fa-save"></i> Simpan Perubahan';
+    bootstrap.Modal.getOrCreateInstance(document.getElementById('modalBukuTamu')).show();
 }
 
 // Navigasi Tab Publik (Siswa, Guru, Tamu)
@@ -8300,6 +8357,8 @@ function submitBukuTamu(e) {
     const jk = String(document.getElementById('tamuJk')?.value || 'L').trim();
     const keperluan = String(document.getElementById('tamuKeperluan')?.value || 'Membaca Buku').trim();
     const keterangan = String(document.getElementById('tamuKeterangan')?.value || '').trim();
+    const editId = String(document.getElementById('editVisitorId')?.value || '').trim();
+    const isEditing = Boolean(editId);
 
     if (!nama) {
         Swal.fire('Perhatian', 'Nama lengkap pengunjung wajib diisi!', 'warning');
@@ -8321,7 +8380,7 @@ function submitBukuTamu(e) {
     const btn = document.getElementById('btnSubmitBukuTamu');
     if (btn) {
         btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Menyimpan...';
+        btn.innerHTML = `<i class="fas fa-spinner fa-spin me-2"></i> ${isEditing ? 'Menyimpan perubahan...' : 'Menyimpan...'}`;
     }
 
     const now = new Date();
@@ -8336,7 +8395,7 @@ function submitBukuTamu(e) {
 
     const tglWaktu = `${inputDate} ${inputTime}`;
     const visitorData = {
-        id: 'KJG-' + Date.now() + '-' + Math.floor(Math.random() * 899 + 100),
+        id: editId || ('KJG-' + Date.now() + '-' + Math.floor(Math.random() * 899 + 100)),
         tanggal: inputDate,
         jam: inputTime,
         tanggalWaktu: tglWaktu,
@@ -8349,11 +8408,11 @@ function submitBukuTamu(e) {
         keterangan: keterangan || '-'
     };
 
-    google.script.run
+    const request = google.script.run
         .withSuccessHandler(res => {
             if (btn) {
                 btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-save me-2"></i> Simpan Catatan Kunjungan';
+                btn.innerHTML = `<i class="fas fa-save me-2"></i> ${isEditing ? 'Simpan Perubahan' : 'Simpan Catatan Kunjungan'}`;
             }
             if (res && res.status !== false) {
                 const modalEl = document.getElementById('modalBukuTamu');
@@ -8366,8 +8425,8 @@ function submitBukuTamu(e) {
 
                 Swal.fire({
                     icon: 'success',
-                    title: 'Berhasil Disimpan!',
-                    html: `Data kunjungan <b>${escapeHtml(visitorData.nama)}</b> telah berhasil dicatat.<br><span class="badge bg-primary mt-2">${escapeHtml(visitorData.kategori)}</span> <span class="badge bg-secondary mt-2">${escapeHtml(visitorData.kelasInstansi)}</span>`,
+                    title: isEditing ? 'Perubahan Disimpan!' : 'Berhasil Disimpan!',
+                    html: `Data kunjungan <b>${escapeHtml(visitorData.nama)}</b> ${isEditing ? 'telah berhasil diperbarui.' : 'telah berhasil dicatat.'}<br><span class="badge bg-primary mt-2">${escapeHtml(visitorData.kategori)}</span> <span class="badge bg-secondary mt-2">${escapeHtml(visitorData.kelasInstansi)}</span>`,
                     confirmButtonText: 'OK',
                     confirmButtonColor: '#4361ee'
                 });
@@ -8389,11 +8448,11 @@ function submitBukuTamu(e) {
         .withFailureHandler(err => {
             if (btn) {
                 btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-save me-2"></i> Simpan Catatan Kunjungan';
+                btn.innerHTML = `<i class="fas fa-save me-2"></i> ${isEditing ? 'Simpan Perubahan' : 'Simpan Catatan Kunjungan'}`;
             }
             Swal.fire('Gagal Koneksi', 'Tidak dapat mengirim data kunjungan: ' + String(err), 'error');
-        })
-        .catatKunjungan(visitorData);
+        });
+    request[isEditing ? 'updateVisitor' : 'catatKunjungan'](visitorData);
 }
 
 // --- ADMIN BUKU KUNJUNGAN ---
@@ -8472,6 +8531,9 @@ function renderVisitorLogs(data) {
                 <td><span class="badge bg-light text-primary border">${escapeHtml(row.keperluan || '-')}</span></td>
                 <td class="small text-muted text-clamp-2" title="${escapeHtml(row.keterangan || '-')}">${escapeHtml(row.keterangan || '-')}</td>
                 <td class="text-center nowrap-cell">
+                    <button class="btn btn-outline-primary btn-sm rounded-circle shadow-xs me-1" onclick="editVisitorLog(${idParam})" title="Edit catatan kunjungan" style="width: 32px; height: 32px; padding: 0;">
+                        <i class="fas fa-edit"></i>
+                    </button>
                     <button class="btn btn-outline-danger btn-sm rounded-circle shadow-xs" onclick="deleteVisitorLog(${idParam})" title="Hapus catatan kunjungan" style="width: 32px; height: 32px; padding: 0;">
                         <i class="fas fa-trash-alt"></i>
                     </button>
