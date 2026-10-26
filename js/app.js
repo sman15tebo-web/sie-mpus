@@ -9138,7 +9138,7 @@ function base64ToBlob(base64, type = 'application/pdf') {
 }
 
 window.hasCustomSopPdf = function() {
-    return Boolean(localStorage.getItem('sop_pdf_data') || localStorage.getItem('sop_pdf_url'));
+    return Boolean(localStorage.getItem('siempus_sop_pdf_data') || localStorage.getItem('siempus_sop_pdf_url'));
 };
 
 window.loadSOPHukumTab = async function() {
@@ -9147,11 +9147,11 @@ window.loadSOPHukumTab = async function() {
             try {
                 const offRes = await window.electronAPI.getOfflineSopPdf();
                 if (offRes && offRes.hasCustom) {
-                    if (offRes.base64) localStorage.setItem('sop_pdf_data', offRes.base64);
-                    if (offRes.meta) localStorage.setItem('sop_pdf_meta', JSON.stringify(offRes.meta));
+                    if (offRes.base64) localStorage.setItem('siempus_sop_pdf_data', offRes.base64);
+                    if (offRes.meta) localStorage.setItem('siempus_sop_pdf_meta', JSON.stringify(offRes.meta));
                 } else if (offRes && !offRes.hasCustom) {
-                    localStorage.removeItem('sop_pdf_data');
-                    localStorage.removeItem('sop_pdf_meta');
+                    localStorage.removeItem('siempus_sop_pdf_data');
+                    localStorage.removeItem('siempus_sop_pdf_meta');
                 }
             } catch (_) {}
         } else {
@@ -9159,13 +9159,13 @@ window.loadSOPHukumTab = async function() {
                 google.script.run
                     .withSuccessHandler(onlRes => {
                         if (onlRes && onlRes.hasCustom) {
-                            if (onlRes.url) localStorage.setItem('sop_pdf_url', onlRes.url);
-                            if (onlRes.meta) localStorage.setItem('sop_pdf_meta', JSON.stringify(onlRes.meta));
-                            if (onlRes.base64) localStorage.setItem('sop_pdf_data', onlRes.base64);
+                            if (onlRes.url) localStorage.setItem('siempus_sop_pdf_url', onlRes.url);
+                            if (onlRes.meta) localStorage.setItem('siempus_sop_pdf_meta', JSON.stringify(onlRes.meta));
+                            if (onlRes.base64) localStorage.setItem('siempus_sop_pdf_data', onlRes.base64);
                         } else if (onlRes && !onlRes.hasCustom) {
-                            localStorage.removeItem('sop_pdf_data');
-                            localStorage.removeItem('sop_pdf_meta');
-                            localStorage.removeItem('sop_pdf_url');
+                            localStorage.removeItem('siempus_sop_pdf_data');
+                            localStorage.removeItem('siempus_sop_pdf_meta');
+                            localStorage.removeItem('siempus_sop_pdf_url');
                         }
                         updateSopTabUI();
                     })
@@ -9181,12 +9181,12 @@ window.loadSOPHukumTab = async function() {
 };
 
 function updateSopTabUI() {
-    const customSopData = localStorage.getItem('sop_pdf_data') || '';
-    const customSopUrl = localStorage.getItem('sop_pdf_url') || '';
-    const customLocalPath = localStorage.getItem('sop_pdf_local_path') || '';
+    const customSopData = localStorage.getItem('siempus_sop_pdf_data') || '';
+    const customSopUrl = localStorage.getItem('siempus_sop_pdf_url') || '';
+    const customLocalPath = localStorage.getItem('siempus_sop_pdf_local_path') || '';
     let customSopMeta = null;
     try {
-        customSopMeta = JSON.parse(localStorage.getItem('sop_pdf_meta') || 'null');
+        customSopMeta = JSON.parse(localStorage.getItem('siempus_sop_pdf_meta') || 'null');
     } catch(e) {}
 
     const activeFileNameEl = document.getElementById('sopActiveFileName');
@@ -9331,10 +9331,10 @@ window.saveSopPdfFile = async function() {
             });
             if (!offRes || !offRes.success) throw new Error(offRes?.message || 'Gagal menyimpan ke penyimpanan lokal laptop.');
 
-            localStorage.setItem('sop_pdf_data', pendingSopPdfData);
-            localStorage.setItem('sop_pdf_meta', JSON.stringify(offRes.meta || pendingSopPdfMeta));
-            if (offRes.filePath) localStorage.setItem('sop_pdf_local_path', offRes.filePath);
-            localStorage.setItem('offline_sop_pdf_pending_sync', 'true');
+            localStorage.setItem('siempus_sop_pdf_data', pendingSopPdfData);
+            localStorage.setItem('siempus_sop_pdf_meta', JSON.stringify(offRes.meta || pendingSopPdfMeta));
+            if (offRes.filePath) localStorage.setItem('siempus_sop_pdf_local_path', offRes.filePath);
+            localStorage.setItem('siempus_offline_sop_pdf_pending_sync', 'true');
 
             Swal.fire({
                 icon: 'success',
@@ -9354,9 +9354,9 @@ window.saveSopPdfFile = async function() {
                         Swal.fire({ icon: 'error', title: 'Gagal Menyimpan', text: onlRes?.message || 'Gagal mengunggah file ke Google Drive.' });
                         return;
                     }
-                    localStorage.setItem('sop_pdf_data', pendingSopPdfData);
-                    localStorage.setItem('sop_pdf_meta', JSON.stringify(onlRes.meta || pendingSopPdfMeta));
-                    if (onlRes.url) localStorage.setItem('sop_pdf_url', onlRes.url);
+                    localStorage.setItem('siempus_sop_pdf_data', pendingSopPdfData);
+                    localStorage.setItem('siempus_sop_pdf_meta', JSON.stringify(onlRes.meta || pendingSopPdfMeta));
+                    if (onlRes.url) localStorage.setItem('siempus_sop_pdf_url', onlRes.url);
 
                     Swal.fire({
                         icon: 'success',
@@ -9410,12 +9410,12 @@ window.hapusSopPdf = function() {
                 }
             } catch (_) {}
 
-            localStorage.removeItem('sop_pdf_data');
-            localStorage.removeItem('sop_pdf_meta');
-            localStorage.removeItem('sop_pdf_url');
-            localStorage.removeItem('sop_pdf_local_path');
-            localStorage.removeItem('offline_sop_pdf_pending_sync');
-            localStorage.setItem('offline_sop_pdf_pending_delete', 'true');
+            localStorage.removeItem('siempus_sop_pdf_data');
+            localStorage.removeItem('siempus_sop_pdf_meta');
+            localStorage.removeItem('siempus_sop_pdf_url');
+            localStorage.removeItem('siempus_sop_pdf_local_path');
+            localStorage.removeItem('siempus_offline_sop_pdf_pending_sync');
+            localStorage.setItem('siempus_offline_sop_pdf_pending_delete', 'true');
             if (activeSopBlobUrl) {
                 URL.revokeObjectURL(activeSopBlobUrl);
                 activeSopBlobUrl = null;
@@ -9435,7 +9435,7 @@ window.hapusSopPdf = function() {
 
 window.getActiveSopUrl = function() {
     // 1. Cek Blob URL lokal jika ada data base64 (offline SQLite maupun online)
-    const customData = localStorage.getItem('sop_pdf_data');
+    const customData = localStorage.getItem('siempus_sop_pdf_data');
     if (customData) {
         try {
             if (activeSopBlobUrl) URL.revokeObjectURL(activeSopBlobUrl);
@@ -9449,14 +9449,14 @@ window.getActiveSopUrl = function() {
     }
 
     // 2. Cek Path File Lokal di Harddisk (Electron Desktop)
-    const localPath = localStorage.getItem('sop_pdf_local_path');
+    const localPath = localStorage.getItem('siempus_sop_pdf_local_path');
     if (localPath && window.isElectron) {
         const normalized = localPath.replace(/\\/g, '/');
         return normalized.startsWith('file://') ? normalized : `file:///${normalized}`;
     }
 
     // 3. Cek URL Google Drive jika berada di web online
-    const customUrl = localStorage.getItem('sop_pdf_url');
+    const customUrl = localStorage.getItem('siempus_sop_pdf_url');
     if (customUrl && !window.isElectron) {
         return customUrl;
     }
@@ -9499,22 +9499,22 @@ window.openSOPModalLanding = async function() {
     iframe.classList.add('d-none');
 
     // Coba baca dari database offline/online jika cache lokal belum terisi
-    if (!localStorage.getItem('sop_pdf_data') && !localStorage.getItem('sop_pdf_url')) {
+    if (!localStorage.getItem('siempus_sop_pdf_data') && !localStorage.getItem('siempus_sop_pdf_url')) {
         try {
             if (window.isElectron && window.electronAPI && typeof window.electronAPI.getOfflineSopPdf === 'function') {
                 const offRes = await window.electronAPI.getOfflineSopPdf();
                 if (offRes && offRes.hasCustom) {
-                    if (offRes.base64) localStorage.setItem('sop_pdf_data', offRes.base64);
-                    if (offRes.meta) localStorage.setItem('sop_pdf_meta', JSON.stringify(offRes.meta));
-                    if (offRes.localPath) localStorage.setItem('sop_pdf_local_path', offRes.localPath);
+                    if (offRes.base64) localStorage.setItem('siempus_sop_pdf_data', offRes.base64);
+                    if (offRes.meta) localStorage.setItem('siempus_sop_pdf_meta', JSON.stringify(offRes.meta));
+                    if (offRes.localPath) localStorage.setItem('siempus_sop_pdf_local_path', offRes.localPath);
                 }
             } else if (typeof google !== 'undefined' && google.script && google.script.run) {
                 google.script.run
                     .withSuccessHandler(onlRes => {
                         if (onlRes && onlRes.hasCustom) {
-                            if (onlRes.url) localStorage.setItem('sop_pdf_url', onlRes.url);
-                            if (onlRes.meta) localStorage.setItem('sop_pdf_meta', JSON.stringify(onlRes.meta));
-                            if (onlRes.base64) localStorage.setItem('sop_pdf_data', onlRes.base64);
+                            if (onlRes.url) localStorage.setItem('siempus_sop_pdf_url', onlRes.url);
+                            if (onlRes.meta) localStorage.setItem('siempus_sop_pdf_meta', JSON.stringify(onlRes.meta));
+                            if (onlRes.base64) localStorage.setItem('siempus_sop_pdf_data', onlRes.base64);
                         }
                     })
                     .getSopPdf(false);
@@ -9552,7 +9552,7 @@ window.downloadActiveSop = function() {
     const pdfUrl = getActiveSopUrl();
     let fileName = 'Dokumen_SOP_Perpustakaan.pdf';
     try {
-        const meta = JSON.parse(localStorage.getItem('sop_pdf_meta') || 'null');
+        const meta = JSON.parse(localStorage.getItem('siempus_sop_pdf_meta') || 'null');
         if (meta?.name) fileName = meta.name;
     } catch(e) {}
 
