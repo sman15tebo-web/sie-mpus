@@ -1849,7 +1849,7 @@ function apiHelper() {
                 if (action === 'uploadSopPdf') {
                     if (window.electronAPI && window.electronAPI.saveOfflineSopPdf) {
                         const offRes = await window.electronAPI.saveOfflineSopPdf(payload);
-                        localStorage.setItem('offline_sop_pdf_pending_sync', 'true');
+                        localStorage.setItem('siempus_offline_sop_pdf_pending_sync', 'true');
                         if (successCb) successCb(offRes);
                         return;
                     }
@@ -1864,7 +1864,7 @@ function apiHelper() {
                 if (action === 'deleteSopPdf') {
                     if (window.electronAPI && window.electronAPI.deleteOfflineSopPdf) {
                         const offRes = await window.electronAPI.deleteOfflineSopPdf();
-                        localStorage.removeItem('offline_sop_pdf_pending_sync');
+                        localStorage.removeItem('siempus_offline_sop_pdf_pending_sync');
                         if (successCb) successCb(offRes);
                         return;
                     }
