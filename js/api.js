@@ -1567,6 +1567,14 @@ function apiHelper() {
                             allVisitors.unshift(vd);
                         }
                     }
+                    for (const item of currentQueue.filter(q => q.action === 'updateVisitor')) {
+                        const updatedVisitor = item.payload?.visitorData;
+                        const id = String(updatedVisitor?.id || '').trim();
+                        if (!id || deleted.has(id)) continue;
+                        const existingIndex = allVisitors.findIndex(visitor => String(visitor.id || '').trim() === id);
+                        if (existingIndex >= 0) allVisitors[existingIndex] = updatedVisitor;
+                        else allVisitors.unshift(updatedVisitor);
+                    }
 
                     allVisitors.sort((a, b) => String(b.tanggalWaktu || '').localeCompare(String(a.tanggalWaktu || '')));
 
@@ -1634,6 +1642,33 @@ function apiHelper() {
             }
         } else {
             try {
+                if (action === 'updateVisitor' && payload.visitorData) {
+                    const visitor = payload.visitorData;
+                    const visitorId = String(visitor.id || '').trim();
+                    if (!visitorId) throw new Error('ID kunjungan tidak valid.');
+
+                    await saveToLocalDB('kunjungan', visitor);
+                    const currentQueue = await getFromLocalDB('syncQueue') || [];
+                    const matchingQueue = (Array.isArray(currentQueue) ? currentQueue : []).filter(item =>
+                        String(item.payload?.visitorData?.id || '').trim() === visitorId &&
+                        (item.action === 'catatKunjungan' || item.action === 'updateVisitor')
+                    );
+                    const pendingCreate = matchingQueue.some(item => item.action === 'catatKunjungan');
+                    for (const item of matchingQueue) {
+                        await deleteFromLocalDB('syncQueue', item.id);
+                    }
+                    await addToQueue(
+                        pendingCreate ? 'catatKunjungan' : 'updateVisitor',
+                        { visitorData: visitor }
+                    );
+                    if (successCb) successCb({
+                        status: true,
+                        success: true,
+                        message: 'Perubahan kunjungan tersimpan lokal dan masuk antrean sinkronisasi.'
+                    });
+                    return;
+                }
+
                 if (action === 'deleteHistory') {
                     // MODE ONLINE (Web): Jika online di web browser, kirim langsung ke GAS via fetch
                     if (!window.isElectron && navigator.onLine) {
@@ -1989,6 +2024,7 @@ function apiHelper() {
         deleteHistory: function (id, isA) { execute('deleteHistory', { idTrx: id, isArchive: isA }); },
         callGeminiAI: function (p) { execute('callGeminiAI', { prompt: p }); },
         catatKunjungan: function (d) { execute('catatKunjungan', { visitorData: d }); },
+        updateVisitor: function (d) { execute('updateVisitor', { visitorData: d }); },
         getVisitorList: function (p, l, q, k, s, e) { execute('getVisitorList', { page: p, limit: l, search: q, kategori: k, startDate: s, endDate: e }); },
         deleteVisitor: function (id) { execute('deleteVisitor', { id: id }); },
         uploadSopPdf: function (dataUrl, name) { execute('uploadSopPdf', { fileDataUrl: dataUrl, filename: name }); },
